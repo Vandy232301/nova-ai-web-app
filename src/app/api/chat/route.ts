@@ -14,6 +14,13 @@ export async function POST(req: NextRequest): Promise<Response> {
     const history = body.messages ?? [];
     const locale = body.locale || "en";
 
+    // Debug: log API key status (first 10 chars only)
+    const hasKey = !!process.env.ANTHROPIC_API_KEY;
+    const keyPreview = process.env.ANTHROPIC_API_KEY 
+      ? process.env.ANTHROPIC_API_KEY.substring(0, 10) + "..." 
+      : "undefined";
+    console.log("[NOVA API] API Key present:", hasKey, "Preview:", keyPreview);
+
     // Convert our message format to Anthropic's format
     const claudeMessages = history
       .filter((m: { role: string }) => m.role === "user" || m.role === "assistant")
@@ -24,6 +31,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     // If no API key, fall back to a simple response
     if (!process.env.ANTHROPIC_API_KEY) {
+      console.log("[NOVA API] No API key found, using fallback");
       return createFallbackResponse(locale);
     }
 
