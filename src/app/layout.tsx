@@ -20,8 +20,8 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "NOVA — Build software. Talk to AI.",
   description:
-    "NOVA is an AI-powered software development company. Senior engineers + artificial intelligence for clear, structured, predictable software development.",
-  metadataBase: new URL("https://nova.dev"),
+    "AI-powered software development: Senior engineers + artificial intelligence deliver predictable costs, clear timelines, and zero wasted weeks. From idea to production in record time.",
+  metadataBase: new URL("https://nova-ai-web-app.vercel.app"),
   icons: {
     icon: [
       { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
@@ -32,9 +32,25 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "NOVA — Build software with AI-powered precision",
-    description: "Senior engineers + AI. No guesswork. No wasted weeks. Just clear, predictable software development.",
+    title: "NOVA — Build software faster with AI-powered precision",
+    description: "Senior engineers + artificial intelligence. Predictable costs. Clear timelines. No wasted weeks. Transform your idea into production-ready software.",
     type: "website",
+    url: "https://nova-ai-web-app.vercel.app",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "NOVA - AI-powered software development",
+      },
+    ],
+    siteName: "NOVA",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NOVA — Build software faster with AI-powered precision",
+    description: "Senior engineers + AI. Predictable costs. Clear timelines. No wasted weeks.",
+    images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
 };
