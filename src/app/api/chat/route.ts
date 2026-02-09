@@ -4,10 +4,6 @@ import { NOVA_SYSTEM_PROMPT } from "@/lib/ai/system-prompt";
 
 export const runtime = "nodejs";
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || "",
-});
-
 export async function POST(req: NextRequest): Promise<Response> {
   try {
     const body = await req.json();
@@ -15,11 +11,19 @@ export async function POST(req: NextRequest): Promise<Response> {
     const locale = body.locale || "en";
 
     // Debug: log API key status (first 10 chars only)
-    const hasKey = !!process.env.ANTHROPIC_API_KEY;
-    const keyPreview = process.env.ANTHROPIC_API_KEY 
-      ? process.env.ANTHROPIC_API_KEY.substring(0, 10) + "..." 
-      : "undefined";
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    const hasKey = !!apiKey;
+    const keyPreview = apiKey ? apiKey.substring(0, 10) + "..." : "undefined";
     console.log("[NOVA API] API Key present:", hasKey, "Preview:", keyPreview);
+
+    // If no API key, fall back to a simple response
+    if (!apiKey) {
+      console.log("[NOVA API] No API key found, using fallback");
+      return createFallbackResponse(locale);
+    }
+
+    // Initialize Anthropic client with the API key
+    const anthropic = new Anthropic({ apiKey });
 
     // Convert our message format to Anthropic's format
     const claudeMessages = history
@@ -28,12 +32,6 @@ export async function POST(req: NextRequest): Promise<Response> {
         role: m.role as "user" | "assistant",
         content: m.content,
       }));
-
-    // If no API key, fall back to a simple response
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.log("[NOVA API] No API key found, using fallback");
-      return createFallbackResponse(locale);
-    }
 
     // Create streaming response from Claude
     const stream = anthropic.messages.stream({
