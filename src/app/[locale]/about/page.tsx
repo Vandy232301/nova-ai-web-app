@@ -238,7 +238,7 @@ export default function AboutPage() {
       {/* SECTION 4 — THE SOLUTION */}
       <div className="w-full relative py-20 sm:py-44">
         <div className="absolute -inset-y-20 inset-x-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-gradient-to-r from-violet-500/15 via-blue-500/10 to-violet-500/15 blur-[150px]" />
+          <div className="nova-heavy-blur absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] rounded-full bg-gradient-to-r from-violet-500/15 via-blue-500/10 to-violet-500/15 blur-[150px]" />
         </div>
         <div className="relative z-10 max-w-4xl mx-auto px-6 sm:px-10 text-center">
           <Reveal>
@@ -278,9 +278,9 @@ export default function AboutPage() {
         {/* Galactic background */}
         {/* Galactic background — nebula glow only */}
         <div className="absolute -inset-y-32 inset-x-0 pointer-events-none">
-          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full bg-gradient-to-r from-violet-600/20 via-blue-500/15 to-violet-500/20 blur-[150px]" />
-          <div className="absolute top-[15%] left-1/4 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-blue-500/12 to-transparent blur-[100px]" />
-          <div className="absolute top-[25%] right-1/4 w-[350px] h-[350px] rounded-full bg-gradient-to-tl from-violet-500/12 to-transparent blur-[100px]" />
+          <div className="nova-heavy-blur absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] rounded-full bg-gradient-to-r from-violet-600/20 via-blue-500/15 to-violet-500/20 blur-[150px]" />
+          <div className="nova-heavy-blur absolute top-[15%] left-1/4 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-blue-500/12 to-transparent blur-[100px]" />
+          <div className="nova-heavy-blur absolute top-[25%] right-1/4 w-[350px] h-[350px] rounded-full bg-gradient-to-tl from-violet-500/12 to-transparent blur-[100px]" />
         </div>
 
         <div className="relative z-10 max-w-6xl mx-auto px-6 sm:px-10">
@@ -497,7 +497,7 @@ export default function AboutPage() {
       {/* SECTION 9 — FINAL CTA + FOOTER */}
       <div className="w-full px-6 sm:px-10 pt-32 sm:pt-44 relative">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-gradient-to-t from-violet-500/20 to-blue-500/10 blur-[120px]" />
+          <div className="nova-heavy-blur absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-gradient-to-t from-violet-500/20 to-blue-500/10 blur-[120px]" />
         </div>
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <Reveal>

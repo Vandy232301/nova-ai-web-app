@@ -336,37 +336,33 @@ body {
   .liquid-glass-icon,
   .liquid-glass-input,
   .liquid-glass-callout,
-  .liquid-glass-cta {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .liquid-glass,
+  .liquid-glass-cta,
   .liquid-glass-active {
-    backdrop-filter: blur(12px) saturate(1.2);
-    -webkit-backdrop-filter: blur(12px) saturate(1.2);
+    -webkit-tap-highlight-color: transparent;
+    /* Remove backdrop-filter on mobile — major performance gain */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
-  .liquid-glass-card,
-  .liquid-glass-card-accent {
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
-  }
-
-  .liquid-glass-input {
-    backdrop-filter: blur(16px) saturate(1.2);
-    -webkit-backdrop-filter: blur(16px) saturate(1.2);
-  }
-
-  /* Reduce gradient animation complexity on mobile */
+  /* Stop all gradient background animations on mobile */
   .nova-gradient-layer::before {
-    animation: nova-gradient-rotate 45s linear infinite;
-    filter: blur(140px);
+    animation: none !important;
+    filter: blur(80px);
+    opacity: 0.6;
   }
 
   .nova-gradient-layer::after {
-    animation: nova-gradient-rotate-reverse 50s linear infinite;
-    filter: blur(120px);
-    opacity: 0.7;
+    display: none !important;
+  }
+
+  /* Hide heavy decorative blurs on mobile */
+  .nova-heavy-blur {
+    display: none !important;
+  }
+
+  /* Simplify framer-motion on mobile — disable transform animations on decorative elements */
+  .nova-orbit {
+    animation: none !important;
   }
 }
 

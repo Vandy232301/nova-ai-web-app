@@ -73,8 +73,8 @@ export default function ContactPage() {
       <div className="relative w-full min-h-[60vh] sm:min-h-[70vh] flex items-center justify-center px-5 sm:px-6 pt-24 sm:pt-32 pb-12 sm:pb-16">
         {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/3 left-[10%] w-64 h-64 rounded-full bg-gradient-to-br from-violet-500/10 to-blue-500/5 blur-[100px]" />
-          <div className="absolute bottom-1/4 right-[15%] w-48 h-48 rounded-full bg-gradient-to-tl from-blue-500/10 to-violet-500/5 blur-[80px]" />
+          <div className="nova-heavy-blur absolute top-1/3 left-[10%] w-64 h-64 rounded-full bg-gradient-to-br from-violet-500/10 to-blue-500/5 blur-[100px]" />
+          <div className="nova-heavy-blur absolute bottom-1/4 right-[15%] w-48 h-48 rounded-full bg-gradient-to-tl from-blue-500/10 to-violet-500/5 blur-[80px]" />
         </div>
 
         <motion.div
@@ -307,7 +307,7 @@ export default function ContactPage() {
       ═══════════════════════════════════════════════════════════════════ */}
       <div className="w-full px-6 sm:px-10 pt-24 sm:pt-32 relative">
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] rounded-full bg-gradient-to-t from-violet-500/15 to-blue-500/8 blur-[100px]" />
+          <div className="nova-heavy-blur absolute bottom-0 left-1/2 -translate-x-1/2 w-[500px] h-[250px] rounded-full bg-gradient-to-t from-violet-500/15 to-blue-500/8 blur-[100px]" />
         </div>
         <div className="relative z-10 max-w-2xl mx-auto text-center">
           <Reveal>

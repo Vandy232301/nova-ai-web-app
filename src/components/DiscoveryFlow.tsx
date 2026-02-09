@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
@@ -12,6 +12,10 @@ interface ChatMessage {
   createdAt: number;
 }
 
+interface QuickReply {
+  label: string;
+}
+
 export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const t = useTranslations("discovery");
   const locale = useLocale();
@@ -19,8 +23,10 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const hasInitialized = useRef(false);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -28,10 +34,147 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     }, 50);
   }, []);
 
+  // Quick reply option sets based on detected topics
+  const optionSets = useMemo(() => ({
+    projectType: [
+      { label: t("opt_webapp") },
+      { label: t("opt_mobile") },
+      { label: t("opt_saas") },
+      { label: t("opt_dashboard") },
+      { label: t("opt_ecommerce") },
+      { label: t("opt_other") },
+    ],
+    industry: [
+      { label: t("opt_healthcare") },
+      { label: t("opt_fintech") },
+      { label: t("opt_education") },
+      { label: t("opt_retail") },
+      { label: t("opt_logistics") },
+      { label: t("opt_hr") },
+      { label: t("opt_media") },
+      { label: t("opt_otherindustry") },
+    ],
+    audience: [
+      { label: t("opt_b2b") },
+      { label: t("opt_b2c") },
+      { label: t("opt_internal") },
+      { label: t("opt_both") },
+    ],
+    stage: [
+      { label: t("opt_idea") },
+      { label: t("opt_design") },
+      { label: t("opt_existing") },
+      { label: t("opt_mvp") },
+    ],
+    budget: [
+      { label: t("opt_under10") },
+      { label: t("opt_10to25") },
+      { label: t("opt_25to50") },
+      { label: t("opt_50to100") },
+      { label: t("opt_over100") },
+      { label: t("opt_unsure") },
+    ],
+    scale: [
+      { label: t("opt_scale_small") },
+      { label: t("opt_scale_medium") },
+      { label: t("opt_scale_large") },
+      { label: t("opt_scale_massive") },
+      { label: t("opt_scale_unsure") },
+    ],
+    timeline: [
+      { label: t("opt_timeline_1m") },
+      { label: t("opt_timeline_3m") },
+      { label: t("opt_timeline_6m") },
+      { label: t("opt_timeline_12m") },
+      { label: t("opt_timeline_flexible") },
+    ],
+  }), [t]);
+
+  // Detect which quick replies to show based on Claude's response
+  const detectQuickReplies = useCallback((text: string): QuickReply[] => {
+    const lower = text.toLowerCase();
+
+    // Project type detection
+    if (
+      (lower.includes("web app") || lower.includes("mobile app") || lower.includes("saas") || lower.includes("e-commerce") || lower.includes("dashboard")) &&
+      (lower.includes("what type") || lower.includes("quel type") || lower.includes("ce tip") || lower.includes("welche art") || lower.includes("qué tipo") || lower.includes("che tipo") || lower.includes("какой тип") || lower.includes("什么类型") || lower.includes("どのタイプ") || lower.includes("looking to build") || lower.includes("thinking about") || lower.includes("thinking of"))
+    ) {
+      return optionSets.projectType;
+    }
+
+    // Industry detection
+    if (
+      lower.includes("industry") || lower.includes("domain") || lower.includes("sector") ||
+      lower.includes("industrie") || lower.includes("domeniu") || lower.includes("domaine") ||
+      lower.includes("branche") || lower.includes("settore") || lower.includes("отрасл") ||
+      lower.includes("行业") || lower.includes("業界")
+    ) {
+      return optionSets.industry;
+    }
+
+    // Audience detection
+    if (
+      (lower.includes("who") && (lower.includes("user") || lower.includes("using") || lower.includes("audience") || lower.includes("target"))) ||
+      lower.includes("b2b") || lower.includes("b2c") ||
+      lower.includes("cine") || lower.includes("utilizator") ||
+      lower.includes("qui") || lower.includes("utilisera") ||
+      lower.includes("wer") || lower.includes("nutzen") ||
+      lower.includes("quién") || lower.includes("chi") ||
+      lower.includes("кто") || lower.includes("谁") || lower.includes("誰")
+    ) {
+      return optionSets.audience;
+    }
+
+    // Stage detection
+    if (
+      (lower.includes("where are you") && (lower.includes("process") || lower.includes("project") || lower.includes("currently"))) ||
+      lower.includes("current stage") || lower.includes("right now with") ||
+      lower.includes("unde ești") || lower.includes("stadiu") ||
+      lower.includes("où en êtes") || lower.includes("wo stehen") ||
+      lower.includes("dónde estás") || lower.includes("dove sei") ||
+      lower.includes("на каком этапе") || lower.includes("目前") || lower.includes("現在どの")
+    ) {
+      return optionSets.stage;
+    }
+
+    // Budget detection
+    if (
+      lower.includes("budget") || lower.includes("buget") || lower.includes("budgétaire") ||
+      lower.includes("presupuesto") || lower.includes("бюджет") || lower.includes("预算") || lower.includes("予算")
+    ) {
+      return optionSets.budget;
+    }
+
+    // Scale / users detection
+    if (
+      (lower.includes("how many") && lower.includes("user")) ||
+      lower.includes("expect in the first year") ||
+      lower.includes("câți utilizatori") || lower.includes("combien d'utilisateurs") ||
+      lower.includes("wie viele") || lower.includes("cuántos usuarios") ||
+      lower.includes("quanti utenti") || lower.includes("сколько пользователей") ||
+      lower.includes("多少用户") || lower.includes("何人のユーザー")
+    ) {
+      return optionSets.scale;
+    }
+
+    // Timeline detection
+    if (
+      (lower.includes("timeline") || lower.includes("when") || lower.includes("deadline")) &&
+      (lower.includes("ready") || lower.includes("first version") || lower.includes("launch") || lower.includes("ideal")) ||
+      lower.includes("când") || lower.includes("calendrier") || lower.includes("zeitrahmen") ||
+      lower.includes("cronograma") || lower.includes("таймлайн") || lower.includes("时间") || lower.includes("タイムライン")
+    ) {
+      return optionSets.timeline;
+    }
+
+    return [];
+  }, [optionSets]);
+
   // Send message to Claude API
   const sendToAPI = useCallback(
     async (allMessages: ChatMessage[]) => {
       setIsStreaming(true);
+      setQuickReplies([]);
       scrollToBottom();
 
       const assistantId = `assistant-${Date.now()}`;
@@ -106,13 +249,19 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
               } else if (parsed.type === "error") {
                 pushAssistant("Something went wrong. Please try again.");
               }
-            } catch { /* ignore incomplete chunks */ }
+            } catch { /* ignore */ }
           }
         }
 
-        // Check if the response contains a summary (project summary section)
+        // Check for summary
         if (fullContent.includes("📋") || fullContent.toLowerCase().includes("project summary") || fullContent.toLowerCase().includes("next step")) {
           setShowSummary(true);
+        }
+
+        // Detect and show quick replies
+        const detected = detectQuickReplies(fullContent);
+        if (detected.length > 0) {
+          setQuickReplies(detected);
         }
 
         reader.releaseLock();
@@ -132,30 +281,46 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         setTimeout(() => inputRef.current?.focus(), 100);
       }
     },
-    [locale, scrollToBottom]
+    [locale, scrollToBottom, detectQuickReplies]
   );
 
-  // Initial greeting — trigger Claude to start the conversation
+  // Initial greeting
   useEffect(() => {
-    if (messages.length === 0) {
-      // Send an initial "start" message to get Claude to greet and ask first question
+    if (messages.length === 0 && !hasInitialized.current) {
+      hasInitialized.current = true;
       const initMessage: ChatMessage = {
         id: `user-init-${Date.now()}`,
         role: "user",
         content: `[System: The user just clicked "Start building" on the NOVA website. Begin the product discovery conversation. Greet them warmly and ask your first question. Respond in the language: ${locale}]`,
         createdAt: Date.now(),
       };
-      // Don't show this system message in UI, but send it to API
       sendToAPI([initMessage]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Handle user submit
+  // Handle quick reply click
+  const handleQuickReply = (label: string) => {
+    if (isStreaming) return;
+    setQuickReplies([]);
+    const userMessage: ChatMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content: label,
+      createdAt: Date.now(),
+    };
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    setInput("");
+    sendToAPI(newMessages);
+  };
+
+  // Handle text submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim() || isStreaming) return;
 
+    setQuickReplies([]);
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -169,7 +334,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     sendToAPI(newMessages);
   };
 
-  // Message count for progress estimation (typical discovery is ~14 exchanges)
+  // Progress estimation
   const messageCount = messages.filter((m) => m.role === "user").length;
   const estimatedProgress = Math.min((messageCount / 13) * 100, showSummary ? 100 : 95);
 
@@ -191,7 +356,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto space-y-4 pb-4 nova-scroll-fade"
-          style={{ maxHeight: "calc(100vh - 180px)" }}
+          style={{ maxHeight: "calc(100dvh - 180px)" }}
         >
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -236,7 +401,33 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
             )}
           </AnimatePresence>
 
-          {/* Schedule call CTA — appears after summary */}
+          {/* Quick reply buttons */}
+          <AnimatePresence>
+            {quickReplies.length > 0 && !isStreaming && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-wrap gap-2 pt-1"
+              >
+                {quickReplies.map((qr, i) => (
+                  <motion.button
+                    key={i}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.04, duration: 0.25 }}
+                    onClick={() => handleQuickReply(qr.label)}
+                    className="liquid-glass rounded-full px-4 py-2 text-[13px] text-white/60 hover:text-white/90 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                  >
+                    {qr.label}
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Schedule call CTA */}
           <AnimatePresence>
             {showSummary && (
               <motion.div
@@ -258,7 +449,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           </AnimatePresence>
         </div>
 
-        {/* Input bar — always visible */}
+        {/* Input bar */}
         <motion.form
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
