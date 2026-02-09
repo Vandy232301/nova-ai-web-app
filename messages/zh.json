@@ -55,7 +55,8 @@
     "opt_healthcare": "医疗/MedTech","opt_fintech": "金融/FinTech","opt_education": "教育/EdTech","opt_retail": "零售/电商","opt_realestate": "房产/PropTech","opt_logistics": "物流/供应链","opt_hr": "人力/招聘","opt_media": "媒体/娱乐","opt_otherindustry": "其他行业",
     "opt_scale_small": "低于1,000","opt_scale_medium": "1,000–10,000","opt_scale_large": "10,000–100,000","opt_scale_massive": "100,000+","opt_scale_unsure": "不确定",
     "opt_timeline_1m": "1个月内","opt_timeline_3m": "1-3个月","opt_timeline_6m": "3-6个月","opt_timeline_12m": "6-12个月","opt_timeline_flexible": "灵活",
-    "summaryType": "项目类型","summaryIndustry": "行业","summaryProblem": "解决的问题","summaryDescription": "产品愿景","summaryAudience": "目标受众","summaryUserRoles": "用户角色","summaryFeatures": "核心功能","summaryIntegrations": "集成","summaryDesign": "设计方向","summaryScale": "预期规模","summaryTimeline": "时间线","summaryStage": "当前阶段","summaryBudget": "预算",
+    "summaryType": "项目类型","summaryIndustry": "行业","summaryProblem": "解决的问题","summaryDescription": "产品愿景","summaryAudience": "目标受众","summaryUserRoles": "用户角色","summaryFeatures": "核心功能","summaryIntegrations": "集成","summaryDesign": "设计方向","summaryScale": "预期规模","summaryTimeline": "时间线","summaryStage": "当前阶段",    "summaryBudget": "预算",
+    "inputPlaceholder": "输入您的回答...",
     "scheduleCall": "与NOVA预约通话","scheduleSubtitle": "我们的高级团队将审查您的简报并做好准备。","startOver": "重新开始"
   },
   "about": {

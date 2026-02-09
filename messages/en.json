@@ -102,6 +102,7 @@
     "summaryTimeline": "Timeline",
     "summaryStage": "Current stage",
     "summaryBudget": "Budget range",
+    "inputPlaceholder": "Type your answer...",
     "scheduleCall": "Schedule a call with NOVA",
     "scheduleSubtitle": "Our senior team will review your project brief and come prepared with architecture, timeline, and proposal.",
     "startOver": "Start over"

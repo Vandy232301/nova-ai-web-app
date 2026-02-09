@@ -55,7 +55,8 @@
     "opt_healthcare": "Здравоохранение / MedTech","opt_fintech": "Финансы / FinTech","opt_education": "Образование / EdTech","opt_retail": "Ритейл / E-commerce","opt_realestate": "Недвижимость / PropTech","opt_logistics": "Логистика / Supply Chain","opt_hr": "HR / Рекрутинг","opt_media": "Медиа / Развлечения","opt_otherindustry": "Другая отрасль",
     "opt_scale_small": "Менее 1 000","opt_scale_medium": "1 000 – 10 000","opt_scale_large": "10 000 – 100 000","opt_scale_massive": "100 000+","opt_scale_unsure": "Не уверен",
     "opt_timeline_1m": "За 1 месяц","opt_timeline_3m": "1 – 3 месяца","opt_timeline_6m": "3 – 6 месяцев","opt_timeline_12m": "6 – 12 месяцев","opt_timeline_flexible": "Гибко",
-    "summaryType": "Тип проекта","summaryIndustry": "Отрасль","summaryProblem": "Решаемая проблема","summaryDescription": "Визия продукта","summaryAudience": "Аудитория","summaryUserRoles": "Роли пользователей","summaryFeatures": "Ключевые функции","summaryIntegrations": "Интеграции","summaryDesign": "Направление дизайна","summaryScale": "Ожидаемый масштаб","summaryTimeline": "Таймлайн","summaryStage": "Текущий этап","summaryBudget": "Бюджет",
+    "summaryType": "Тип проекта","summaryIndustry": "Отрасль","summaryProblem": "Решаемая проблема","summaryDescription": "Визия продукта","summaryAudience": "Аудитория","summaryUserRoles": "Роли пользователей","summaryFeatures": "Ключевые функции","summaryIntegrations": "Интеграции","summaryDesign": "Направление дизайна","summaryScale": "Ожидаемый масштаб","summaryTimeline": "Таймлайн","summaryStage": "Текущий этап",    "summaryBudget": "Бюджет",
+    "inputPlaceholder": "Напишите ваш ответ...",
     "scheduleCall": "Запланировать звонок с NOVA","scheduleSubtitle": "Наша команда изучит ваш бриф и подготовится.","startOver": "Начать сначала"
   },
   "about": {

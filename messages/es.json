@@ -55,7 +55,8 @@
     "opt_healthcare": "Salud / MedTech","opt_fintech": "Finanzas / FinTech","opt_education": "Educación / EdTech","opt_retail": "Retail / E-commerce","opt_realestate": "Inmobiliaria / PropTech","opt_logistics": "Logística / Supply Chain","opt_hr": "RRHH / Reclutamiento","opt_media": "Medios / Entretenimiento","opt_otherindustry": "Otra industria",
     "opt_scale_small": "Menos de 1.000","opt_scale_medium": "1.000 – 10.000","opt_scale_large": "10.000 – 100.000","opt_scale_massive": "100.000+","opt_scale_unsure": "No estoy seguro",
     "opt_timeline_1m": "En 1 mes","opt_timeline_3m": "1 – 3 meses","opt_timeline_6m": "3 – 6 meses","opt_timeline_12m": "6 – 12 meses","opt_timeline_flexible": "Flexible",
-    "summaryType": "Tipo de proyecto","summaryIndustry": "Industria","summaryProblem": "Problema resuelto","summaryDescription": "Visión del producto","summaryAudience": "Público objetivo","summaryUserRoles": "Roles de usuario","summaryFeatures": "Funcionalidades clave","summaryIntegrations": "Integraciones","summaryDesign": "Dirección de diseño","summaryScale": "Escala esperada","summaryTimeline": "Timeline","summaryStage": "Etapa actual","summaryBudget": "Presupuesto",
+    "summaryType": "Tipo de proyecto","summaryIndustry": "Industria","summaryProblem": "Problema resuelto","summaryDescription": "Visión del producto","summaryAudience": "Público objetivo","summaryUserRoles": "Roles de usuario","summaryFeatures": "Funcionalidades clave","summaryIntegrations": "Integraciones","summaryDesign": "Dirección de diseño","summaryScale": "Escala esperada","summaryTimeline": "Timeline","summaryStage": "Etapa actual",    "summaryBudget": "Presupuesto",
+    "inputPlaceholder": "Escribe tu respuesta...",
     "scheduleCall": "Programar llamada con NOVA","scheduleSubtitle": "Nuestro equipo senior revisará tu brief y vendrá preparado.","startOver": "Empezar de nuevo"
   },
   "about": {
