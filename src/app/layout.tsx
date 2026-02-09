@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   description:
     "NOVA is an AI-powered software development company. Senior engineers + artificial intelligence for clear, structured, predictable software development.",
   metadataBase: new URL("https://nova.dev"),
+  icons: {
+    icon: [
+      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
   openGraph: {
     title: "NOVA — Build software with AI-powered precision",
     description: "Senior engineers + AI. No guesswork. No wasted weeks. Just clear, predictable software development.",
@@ -47,6 +56,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="NOVA" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="format-detection" content="telephone=no" />
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body
         className={`${novaSans.variable} antialiased bg-[#050508] text-white`}
