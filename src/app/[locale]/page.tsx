@@ -52,7 +52,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="text-[36px] sm:text-[56px] lg:text-[72px] font-medium leading-[1.1] tracking-[-0.03em] text-white"
+                className="text-[28px] sm:text-[56px] lg:text-[72px] font-medium leading-[1.1] tracking-[-0.03em] text-white"
               >
                 {t("headline")}
               </motion.h1>
@@ -60,7 +60,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 0.8, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-6 sm:mt-8 max-w-2xl mx-auto text-[15px] sm:text-[18px] leading-[1.7] text-white/50"
+                className="mt-5 sm:mt-8 max-w-2xl mx-auto text-[14px] sm:text-[18px] leading-relaxed text-white/50 px-2 sm:px-0"
               >
                 {t("subheadline")}
               </motion.p>
