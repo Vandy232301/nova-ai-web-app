@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     url: "https://nova-ai-web-app.vercel.app",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "NOVA - AI-powered software development",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "NOVA — Build software faster with AI-powered precision",
     description: "Senior engineers + AI. Predictable costs. Clear timelines. No wasted weeks.",
-    images: ["/og-image.png"],
+    images: ["/og-image.jpg"],
   },
   robots: { index: true, follow: true },
 };

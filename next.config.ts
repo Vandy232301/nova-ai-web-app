@@ -12,6 +12,9 @@ const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: ["framer-motion", "next-intl"],
+  },
 };
 
 export default withNextIntl(nextConfig);

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import MobileNav from "@/components/MobileNav";
-import DiscoveryFlow from "@/components/DiscoveryFlow";
+
+const DiscoveryFlow = lazy(() => import("@/components/DiscoveryFlow"));
 
 export default function Home() {
   const t = useTranslations("home");
@@ -96,7 +97,17 @@ export default function Home() {
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="relative z-10 flex w-full flex-1"
           >
-            <DiscoveryFlow onClose={() => setShowDiscovery(false)} />
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-full">
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse delay-100" />
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse delay-200" />
+                </div>
+              </div>
+            }>
+              <DiscoveryFlow onClose={() => setShowDiscovery(false)} />
+            </Suspense>
           </motion.div>
         )}
       </AnimatePresence>
