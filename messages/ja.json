@@ -35,7 +35,7 @@
     "step3Title": "誰のためですか？","step3Subtitle": "ターゲットオーディエンスを選択してください。","opt_b2b": "企業（B2B）","opt_b2c": "消費者（B2C）","opt_internal": "社内チーム","opt_both": "B2BとB2Cの両方",
     "step4Title": "現在どの段階ですか？","step4Subtitle": "最適なサポート方法を理解するのに役立ちます。","opt_idea": "アイデアだけ — まだ何も構築していない","opt_design": "デザインやワイヤーフレームがある","opt_existing": "改善すべき既存の製品がある","opt_mvp": "できるだけ早くMVPが必要",
     "step5Title": "予算の範囲は？","step5Subtitle": "適切なスコープとチームサイズを提案するのに役立ちます。","opt_under10": "10,000€未満","opt_10to25": "10,000€ – 25,000€","opt_25to50": "25,000€ – 50,000€","opt_50to100": "50,000€ – 100,000€","opt_over100": "100,000€以上","opt_unsure": "まだわからない",
-    "step6Title": "わかったことはこちらです","step6Subtitle": "プロジェクトの概要をご確認ください。チームがこれを使って通話の準備をします。","summaryType": "プロジェクトタイプ","summaryDescription": "説明","summaryAudience": "ターゲット","summaryStage": "現在の段階","summaryBudget": "予算範囲","inputPlaceholder": "回答を入力...","scheduleCall": "NOVAとの通話を予約","scheduleSubtitle": "プロジェクトの詳細を確認し、初期の推奨事項を準備します。","startOver": "やり直す"
+    "step6Title": "わかったことはこちらです","step6Subtitle": "プロジェクトの概要をご確認ください。チームがこれを使って通話の準備をします。","summaryType": "プロジェクトタイプ","summaryDescription": "説明","summaryAudience": "ターゲット","summaryStage": "現在の段階","summaryBudget": "予算範囲","inputPlaceholder": "回答を入力...","scheduleCall": "NOVAとの通話を予約","scheduleSubtitle": "プロジェクトの詳細を確認し、初期の推奨事項を準備します。","emailLabel": "メールアドレス（オプション）","emailPlaceholder": "your.email@example.com","emailDescription": "技術提案のコピーをお送りします","thankYouTitle": "予約ありがとうございます！","thankYouMessage": "ディスカバリーコールでプロジェクトについて議論できることを楽しみにしています。チームはプロジェクトブリーフと技術提案を受け取り、アーキテクチャの推奨事項、タイムライン、詳細な提案を準備して参加します。","seeYouAtCall": "ディスカバリーコールでお会いしましょう！","startOver": "やり直す"
   },
   "about": {
     "badge": "NOVAについて",

@@ -57,7 +57,7 @@
     "opt_timeline_1m": "За 1 месяц","opt_timeline_3m": "1 – 3 месяца","opt_timeline_6m": "3 – 6 месяцев","opt_timeline_12m": "6 – 12 месяцев","opt_timeline_flexible": "Гибко",
     "summaryType": "Тип проекта","summaryIndustry": "Отрасль","summaryProblem": "Решаемая проблема","summaryDescription": "Визия продукта","summaryAudience": "Аудитория","summaryUserRoles": "Роли пользователей","summaryFeatures": "Ключевые функции","summaryIntegrations": "Интеграции","summaryDesign": "Направление дизайна","summaryScale": "Ожидаемый масштаб","summaryTimeline": "Таймлайн","summaryStage": "Текущий этап",    "summaryBudget": "Бюджет",
     "inputPlaceholder": "Напишите ваш ответ...",
-    "scheduleCall": "Запланировать звонок с NOVA","scheduleSubtitle": "Наша команда изучит ваш бриф и подготовится.","startOver": "Начать сначала"
+    "scheduleCall": "Запланировать звонок с NOVA","scheduleSubtitle": "Наша команда изучит ваш бриф и подготовится.","emailLabel": "Ваш email (необязательно)","emailPlaceholder": "ваш.email@пример.com","emailDescription": "Мы отправим вам копию технического предложения","thankYouTitle": "Спасибо за планирование!","thankYouMessage": "Мы рады обсудить ваш проект во время звонка по открытию. Наша команда получила ваш бриф проекта и техническое предложение, и мы придем подготовленными с рекомендациями по архитектуре, временными рамками и детальным предложением.","seeYouAtCall": "Увидимся на звонке по открытию!","startOver": "Начать сначала"
   },
   "about": {
     "badge": "О NOVA",

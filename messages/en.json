@@ -105,6 +105,12 @@
     "inputPlaceholder": "Type your answer...",
     "scheduleCall": "Schedule a call with NOVA",
     "scheduleSubtitle": "Our senior team will review your project brief and come prepared with architecture, timeline, and proposal.",
+    "emailLabel": "Your email (optional)",
+    "emailPlaceholder": "your.email@example.com",
+    "emailDescription": "We'll send you a copy of the technical proposal",
+    "thankYouTitle": "Thank you for scheduling!",
+    "thankYouMessage": "We're excited to discuss your project during the Discovery Call. Our team has received your project brief and technical proposal, and we'll come prepared with architecture recommendations, timeline, and a detailed proposal.",
+    "seeYouAtCall": "See you at the Discovery Call!",
     "startOver": "Start over"
   },
   "about": {

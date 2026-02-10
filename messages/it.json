@@ -57,7 +57,7 @@
     "opt_timeline_1m": "Entro 1 mese","opt_timeline_3m": "1 – 3 mesi","opt_timeline_6m": "3 – 6 mesi","opt_timeline_12m": "6 – 12 mesi","opt_timeline_flexible": "Flessibile",
     "summaryType": "Tipo progetto","summaryIndustry": "Settore","summaryProblem": "Problema risolto","summaryDescription": "Visione prodotto","summaryAudience": "Pubblico target","summaryUserRoles": "Ruoli utenti","summaryFeatures": "Funzionalità chiave","summaryIntegrations": "Integrazioni","summaryDesign": "Direzione design","summaryScale": "Scala prevista","summaryTimeline": "Timeline","summaryStage": "Fase attuale",    "summaryBudget": "Budget",
     "inputPlaceholder": "Scrivi la tua risposta...",
-    "scheduleCall": "Prenota chiamata con NOVA","scheduleSubtitle": "Il team senior esaminerà il brief e verrà preparato.","startOver": "Ricomincia"
+    "scheduleCall": "Prenota chiamata con NOVA","scheduleSubtitle": "Il team senior esaminerà il brief e verrà preparato.","emailLabel": "La tua email (opzionale)","emailPlaceholder": "tua.email@esempio.com","emailDescription": "Ti invieremo una copia della proposta tecnica","thankYouTitle": "Grazie per aver programmato!","thankYouMessage": "Siamo entusiasti di discutere il tuo progetto durante la chiamata di scoperta. Il nostro team ha ricevuto il brief del progetto e la proposta tecnica, e verremo preparati con raccomandazioni architetturali, timeline e una proposta dettagliata.","seeYouAtCall": "Ci vediamo alla chiamata di scoperta!","startOver": "Ricomincia"
   },
   "about": {
     "badge": "Chi è NOVA",

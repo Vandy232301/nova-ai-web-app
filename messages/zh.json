@@ -57,7 +57,7 @@
     "opt_timeline_1m": "1个月内","opt_timeline_3m": "1-3个月","opt_timeline_6m": "3-6个月","opt_timeline_12m": "6-12个月","opt_timeline_flexible": "灵活",
     "summaryType": "项目类型","summaryIndustry": "行业","summaryProblem": "解决的问题","summaryDescription": "产品愿景","summaryAudience": "目标受众","summaryUserRoles": "用户角色","summaryFeatures": "核心功能","summaryIntegrations": "集成","summaryDesign": "设计方向","summaryScale": "预期规模","summaryTimeline": "时间线","summaryStage": "当前阶段",    "summaryBudget": "预算",
     "inputPlaceholder": "输入您的回答...",
-    "scheduleCall": "与NOVA预约通话","scheduleSubtitle": "我们的高级团队将审查您的简报并做好准备。","startOver": "重新开始"
+    "scheduleCall": "与NOVA预约通话","scheduleSubtitle": "我们的高级团队将审查您的简报并做好准备。","emailLabel": "您的邮箱（可选）","emailPlaceholder": "your.email@example.com","emailDescription": "我们将向您发送技术提案的副本","thankYouTitle": "感谢您的预约！","thankYouMessage": "我们很高兴在发现通话期间讨论您的项目。我们的团队已收到您的项目简报和技术提案，我们将准备好架构建议、时间表和详细提案。","seeYouAtCall": "发现通话见！","startOver": "重新开始"
   },
   "about": {
     "badge": "关于 NOVA",

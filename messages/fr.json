@@ -57,7 +57,7 @@
     "opt_timeline_1m": "Sous 1 mois","opt_timeline_3m": "1 – 3 mois","opt_timeline_6m": "3 – 6 mois","opt_timeline_12m": "6 – 12 mois","opt_timeline_flexible": "Flexible",
     "summaryType": "Type de projet","summaryIndustry": "Industrie","summaryProblem": "Problème résolu","summaryDescription": "Vision produit","summaryAudience": "Public cible","summaryUserRoles": "Rôles utilisateurs","summaryFeatures": "Fonctionnalités clés","summaryIntegrations": "Intégrations","summaryDesign": "Direction design","summaryScale": "Échelle prévue","summaryTimeline": "Calendrier","summaryStage": "Étape actuelle",    "summaryBudget": "Budget",
     "inputPlaceholder": "Tapez votre réponse...",
-    "scheduleCall": "Planifier un appel avec NOVA","scheduleSubtitle": "Notre équipe senior examinera votre brief et viendra préparée.","startOver": "Recommencer"
+    "scheduleCall": "Planifier un appel avec NOVA","scheduleSubtitle": "Notre équipe senior examinera votre brief et viendra préparée.","emailLabel": "Votre email (optionnel)","emailPlaceholder": "votre.email@exemple.com","emailDescription": "Nous vous enverrons une copie de la proposition technique","thankYouTitle": "Merci d'avoir programmé !","thankYouMessage": "Nous sommes ravis de discuter de votre projet lors de l'appel de découverte. Notre équipe a reçu votre brief de projet et la proposition technique, et nous viendrons préparés avec des recommandations d'architecture, un calendrier et une proposition détaillée.","seeYouAtCall": "À bientôt lors de l'appel de découverte !","startOver": "Recommencer"
   },
   "about": {
     "badge": "À propos de NOVA",

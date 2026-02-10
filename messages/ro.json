@@ -103,6 +103,12 @@
     "inputPlaceholder": "Scrie răspunsul tău...",
     "scheduleCall": "Programează un apel cu NOVA",
     "scheduleSubtitle": "Echipa senior va analiza brief-ul proiectului și va veni pregătită cu arhitectură, timeline și propunere.",
+    "emailLabel": "Email-ul tău (opțional)",
+    "emailPlaceholder": "email@exemplu.com",
+    "emailDescription": "Îți vom trimite o copie a propunerii tehnice",
+    "thankYouTitle": "Mulțumim pentru programare!",
+    "thankYouMessage": "Suntem încântați să discutăm despre proiectul tău în timpul Discovery Call. Echipa noastră a primit brief-ul proiectului și propunerea tehnică, și vom veni pregătiți cu recomandări de arhitectură, timeline și o propunere detaliată.",
+    "seeYouAtCall": "Ne vedem la Discovery Call!",
     "startOver": "Începe din nou"
   },
   "about": {

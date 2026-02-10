@@ -26,8 +26,11 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
+  const [userEmail, setUserEmail] = useState("");
+  const [isScheduled, setIsScheduled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const emailInputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
   const hasSentReport = useRef(false);
 
@@ -276,6 +279,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                     locale,
                     messages: allMessages,
                     finalAssistantMessage: fullContent,
+                    userEmail: userEmail || undefined,
                   }),
                 });
               } catch (err) {
@@ -310,6 +314,23 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     },
     [locale, scrollToBottom, detectQuickReplies]
   );
+
+  // Check if user returned from calendar booking
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("scheduled") === "true") {
+        setIsScheduled(true);
+        // Clean URL
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+      // Also check sessionStorage
+      if (sessionStorage.getItem("nova_scheduled") === "true") {
+        setIsScheduled(true);
+        sessionStorage.removeItem("nova_scheduled");
+      }
+    }
+  }, []);
 
   // Initial greeting
   useEffect(() => {
@@ -454,19 +475,61 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
             )}
           </AnimatePresence>
 
+          {/* Thank you message after scheduling */}
+          <AnimatePresence>
+            {isScheduled && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="pt-4 text-center space-y-4"
+              >
+                <div className="liquid-glass-card rounded-2xl px-6 py-5 space-y-3">
+                  <h3 className="text-lg font-semibold text-white">{t("thankYouTitle")}</h3>
+                  <p className="text-[14px] leading-relaxed text-white/70">{t("thankYouMessage")}</p>
+                  <p className="text-[15px] font-medium text-violet-400">{t("seeYouAtCall")}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Schedule call CTA */}
           <AnimatePresence>
-            {showSummary && (
+            {showSummary && !isScheduled && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="pt-4 text-center space-y-3"
+                className="pt-4 text-center space-y-4"
               >
+                {/* Email input (optional) */}
+                <div className="space-y-2">
+                  <label htmlFor="user-email" className="block text-[12px] text-white/40 text-left px-1">
+                    {t("emailLabel")}
+                  </label>
+                  <input
+                    ref={emailInputRef}
+                    id="user-email"
+                    type="email"
+                    value={userEmail}
+                    onChange={(e) => setUserEmail(e.target.value)}
+                    placeholder={t("emailPlaceholder")}
+                    className="w-full liquid-glass-input rounded-xl px-4 py-2.5 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
+                  />
+                  <p className="text-[11px] text-white/30 px-1">{t("emailDescription")}</p>
+                </div>
+
                 <a
                   href={calendarLink}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => {
+                    // Mark as scheduled when user clicks (they'll complete booking externally)
+                    if (typeof window !== "undefined") {
+                      sessionStorage.setItem("nova_scheduled", "true");
+                    }
+                  }}
                   className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98]"
                 >
                   {t("scheduleCall")}
