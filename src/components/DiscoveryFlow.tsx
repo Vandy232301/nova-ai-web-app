@@ -19,6 +19,8 @@ interface QuickReply {
 export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const t = useTranslations("discovery");
   const locale = useLocale();
+  const calendarLink =
+    (process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_LINK as string | undefined) || "/contact";
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -27,6 +29,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
+  const hasSentReport = useRef(false);
 
   const scrollToBottom = useCallback(() => {
     setTimeout(() => {
@@ -254,8 +257,32 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         }
 
         // Check for summary
-        if (fullContent.includes("📋") || fullContent.toLowerCase().includes("project summary") || fullContent.toLowerCase().includes("next step")) {
+        if (
+          fullContent.includes("📋") ||
+          fullContent.toLowerCase().includes("project summary") ||
+          fullContent.toLowerCase().includes("next step")
+        ) {
           setShowSummary(true);
+
+          // Fire-and-forget: send discovery report email once per session
+          if (!hasSentReport.current) {
+            hasSentReport.current = true;
+            (async () => {
+              try {
+                await fetch("/api/discovery/report", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    locale,
+                    messages: allMessages,
+                    finalAssistantMessage: fullContent,
+                  }),
+                });
+              } catch (err) {
+                console.error("Failed to send discovery report:", err);
+              }
+            })();
+          }
         }
 
         // Detect and show quick replies
@@ -436,13 +463,15 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="pt-4 text-center space-y-3"
               >
-                <Link
-                  href="/contact"
+                <a
+                  href={calendarLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98]"
                 >
                   {t("scheduleCall")}
                   <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                </Link>
+                </a>
                 <p className="text-[13px] text-white/25">{t("scheduleSubtitle")}</p>
               </motion.div>
             )}
