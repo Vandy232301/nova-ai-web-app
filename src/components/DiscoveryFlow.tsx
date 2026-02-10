@@ -35,9 +35,11 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const hasSentReport = useRef(false);
 
   const scrollToBottom = useCallback(() => {
-    setTimeout(() => {
+    if (!scrollRef.current) return;
+    // Use requestAnimationFrame for smoother scrolling
+    requestAnimationFrame(() => {
       scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-    }, 50);
+    });
   }, []);
 
   // Quick reply option sets based on detected topics

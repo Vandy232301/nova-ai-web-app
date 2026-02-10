@@ -78,6 +78,17 @@ export default function RootLayout({
       <body
         className={`${novaSans.variable} antialiased bg-[#050508] text-white`}
       >
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                  navigator.serviceWorker.register('/sw.js').catch(() => {});
+                });
+              }
+            `,
+          }}
+        />
         <div className="nova-gradient-layer" aria-hidden="true" />
         {children}
       </body>

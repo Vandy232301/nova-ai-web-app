@@ -100,6 +100,8 @@ body {
   filter: blur(100px);
   animation: nova-gradient-rotate-reverse 35s linear infinite, nova-gradient-pulse-delayed 18s ease-in-out infinite;
   opacity: 1;
+  will-change: transform;
+  contain: layout style paint;
 }
 
 @keyframes nova-gradient-rotate {
