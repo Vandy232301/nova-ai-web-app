@@ -332,17 +332,26 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     }
   }, []);
 
-  // Initial greeting
+  // Initial greeting - start immediately without delay
   useEffect(() => {
     if (messages.length === 0 && !hasInitialized.current) {
       hasInitialized.current = true;
-      const initMessage: ChatMessage = {
-        id: `user-init-${Date.now()}`,
-        role: "user",
-        content: `[System: The user just clicked "Start building" on the NOVA website. Begin the product discovery conversation. Greet them warmly and ask your first question. Respond in the language: ${locale}]`,
-        createdAt: Date.now(),
+      // Use requestIdleCallback for non-blocking initialization
+      const initializeChat = () => {
+        const initMessage: ChatMessage = {
+          id: `user-init-${Date.now()}`,
+          role: "user",
+          content: `[System: The user just clicked "Start building" on the NOVA website. Begin the product discovery conversation. Greet them warmly and ask your first question. Respond in the language: ${locale}]`,
+          createdAt: Date.now(),
+        };
+        sendToAPI([initMessage]);
       };
-      sendToAPI([initMessage]);
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initializeChat, { timeout: 100 });
+      } else {
+        setTimeout(initializeChat, 0);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

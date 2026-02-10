@@ -13,8 +13,12 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   experimental: {
-    optimizePackageImports: ["framer-motion", "next-intl"],
+    optimizePackageImports: ["framer-motion", "next-intl", "@anthropic-ai/sdk"],
   },
+  // Enable SWC minification for faster builds
+  swcMinify: true,
+  // Optimize fonts
+  optimizeFonts: true,
 };
 
 export default withNextIntl(nextConfig);

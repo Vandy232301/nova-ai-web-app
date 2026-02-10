@@ -23,7 +23,7 @@ export default function Home() {
           onClick={() => setShowDiscovery(false)}
           className="pointer-events-auto flex items-center gap-2 text-white"
         >
-          <Image src="/nova-logo-icon.png" alt="NOVA" width={40} height={40} className="w-9 h-9 sm:w-10 sm:h-10 object-contain" priority />
+          <Image src="/nova-logo-icon.png" alt="NOVA" width={40} height={40} className="w-9 h-9 sm:w-10 sm:h-10 object-contain" priority fetchPriority="high" />
           <span className="tracking-tight font-bold text-[17px] sm:text-[18px]">NOVA</span>
         </button>
         <nav className="pointer-events-auto hidden items-center gap-1.5 sm:flex">
@@ -98,11 +98,11 @@ export default function Home() {
             className="relative z-10 flex w-full flex-1"
           >
             <Suspense fallback={
-              <div className="flex items-center justify-center h-full">
+              <div className="flex items-center justify-center h-full w-full">
                 <div className="flex gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse" />
-                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse delay-100" />
-                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse delay-200" />
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse" style={{ animationDelay: '0ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse" style={{ animationDelay: '150ms' }} />
+                  <div className="w-2 h-2 rounded-full bg-violet-400/50 animate-pulse" style={{ animationDelay: '300ms' }} />
                 </div>
               </div>
             }>
