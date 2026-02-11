@@ -39,6 +39,10 @@ export default function ContactPage() {
   const tNav = useTranslations("nav");
   const tFooter = useTranslations("footer");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  
+  // Get calendar link from env (same as DiscoveryFlow)
+  const calendarLink =
+    (process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_LINK as string | undefined) || "https://calendar.app.google/VL2HLbtxcrMbdRzD9";
 
   const faqs = [
     { q: t("faq1Q"), a: t("faq1A") },
@@ -229,10 +233,15 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-[20px] sm:text-[22px] font-medium text-white mb-3">{t("method2Title")}</h3>
                   <p className="text-[14px] leading-relaxed text-white/50 mb-8 group-hover:text-white/60 transition-colors">{t("method2Desc")}</p>
-                  <button className="inline-flex items-center gap-2 rounded-full liquid-glass px-6 py-2.5 text-[13px] font-medium text-white/70 hover:text-white/90">
+                  <a
+                    href={calendarLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-full liquid-glass px-6 py-2.5 text-[13px] font-medium text-white/70 hover:text-white/90"
+                  >
                     {t("method2Cta")}
                     <span>&rarr;</span>
-                  </button>
+                  </a>
                 </div>
               </motion.div>
             </Reveal>
