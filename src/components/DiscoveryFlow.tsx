@@ -417,6 +417,77 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           className="flex-1 overflow-y-auto space-y-4 pb-4 nova-scroll-fade"
           style={{ maxHeight: "calc(100dvh - 180px)" }}
         >
+          {/* Initial loading state - show while waiting for first NOVA message */}
+          {messages.length === 0 && isStreaming && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center justify-center py-12 space-y-6"
+            >
+              {/* Animated NOVA logo pulse */}
+              <motion.div
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  opacity: [0.7, 1, 0.7],
+                }}
+                transition={{ 
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                className="relative"
+              >
+                <div className="w-16 h-16 rounded-2xl liquid-glass-card flex items-center justify-center">
+                  <span className="text-3xl">✨</span>
+                </div>
+                {/* Orbiting dots */}
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0"
+                >
+                  <div className="absolute top-0 left-1/2 w-2 h-2 rounded-full bg-violet-400/60 -translate-x-1/2 -translate-y-2" />
+                </motion.div>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                  className="absolute inset-0"
+                >
+                  <div className="absolute bottom-0 left-1/2 w-2 h-2 rounded-full bg-blue-400/60 -translate-x-1/2 translate-y-2" />
+                </motion.div>
+              </motion.div>
+
+              {/* Animated text */}
+              <div className="space-y-2 text-center">
+                <motion.p
+                  animate={{ opacity: [0.5, 1, 0.5] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-[13px] text-white/60"
+                >
+                  NOVA is preparing your session...
+                </motion.p>
+                <div className="flex items-center gap-1.5 justify-center">
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                  />
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                  />
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
               <motion.div
