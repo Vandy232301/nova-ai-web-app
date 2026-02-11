@@ -35,10 +35,10 @@ export const metadata: Metadata = {
     title: "NOVA — Build software faster with AI-powered precision",
     description: "Senior engineers + artificial intelligence. Predictable costs. Clear timelines. No wasted weeks. Transform your idea into production-ready software.",
     type: "website",
-    url: "https://nova-ai-web-app.vercel.app",
+    url: "https://nova.vandy.ro",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/og-image-v2.jpg?v=" + Date.now(),
         width: 1200,
         height: 630,
         alt: "NOVA - AI-powered software development",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "NOVA — Build software faster with AI-powered precision",
     description: "Senior engineers + AI. Predictable costs. Clear timelines. No wasted weeks.",
-    images: ["/og-image.jpg"],
+    images: ["/og-image-v2.jpg?v=" + Date.now()],
   },
   robots: { index: true, follow: true },
 };
