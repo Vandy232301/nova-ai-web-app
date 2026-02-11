@@ -1,0 +1,9 @@
+Contact: security@nova-ai.dev
+Expires: 2027-12-31T23:59:59.000Z
+Preferred-Languages: en, ro
+Canonical: https://nova-ai-web-app.vercel.app/.well-known/security.txt
+
+# Security Policy
+# Report security vulnerabilities to: security@nova-ai.dev
+# 
+# We take security seriously and will respond within 48 hours.

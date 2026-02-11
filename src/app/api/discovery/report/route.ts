@@ -5,6 +5,7 @@ import { PROPOSAL_GENERATION_PROMPT } from "@/lib/ai/proposal-prompt";
 
 export const runtime = "nodejs";
 
+// Initialize clients securely (keys never exposed to client)
 const resendApiKey = process.env.RESEND_API_KEY;
 const reportsEmail = process.env.NOVA_REPORTS_EMAIL;
 const anthropicApiKey = process.env.ANTHROPIC_API_KEY;
@@ -14,24 +15,34 @@ const anthropic = anthropicApiKey ? new Anthropic({ apiKey: anthropicApiKey }) :
 
 export async function POST(req: NextRequest): Promise<Response> {
   try {
+    // Validate configuration (never expose which keys are missing)
     if (!resend || !reportsEmail) {
-      console.error("[NOVA REPORT] Missing RESEND_API_KEY or NOVA_REPORTS_EMAIL");
+      if (process.env.NODE_ENV === "development") {
+        console.error("[NOVA REPORT] Missing RESEND_API_KEY or NOVA_REPORTS_EMAIL");
+      }
       return new Response(
         JSON.stringify({
           ok: false,
-          error: "Email reporting is not configured on the server.",
+          error: "Service temporarily unavailable",
         }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+        { status: 503, headers: { "Content-Type": "application/json" } }
       );
     }
 
     const body = await req.json();
+    
+    // Validate and sanitize input
     const { locale, messages, finalAssistantMessage, userEmail } = body as {
       locale?: string;
       messages?: Array<{ role: string; content: string; createdAt?: number }>;
       finalAssistantMessage?: string;
       userEmail?: string;
     };
+
+    // Sanitize user email (basic validation)
+    const sanitizedEmail = userEmail && typeof userEmail === "string" && userEmail.includes("@") 
+      ? userEmail.trim().toLowerCase() 
+      : undefined;
 
     const safeLocale = locale || "en";
     const now = new Date();
@@ -41,7 +52,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     const transcriptLines =
       messages?.map((m) => {
         const role = m.role.toUpperCase();
-        return `${role}: ${m.content}`;
+        // Sanitize content (remove any potential script tags or malicious content)
+        const sanitizedContent = m.content.replace(/<script[^>]*>.*?<\/script>/gi, "");
+        return `${role}: ${sanitizedContent}`;
       }) ?? [];
 
     const conversationContext = [
@@ -73,8 +86,10 @@ export async function POST(req: NextRequest): Promise<Response> {
           proposalDocument = proposalText.text;
         }
       } catch (proposalError) {
-        console.error("[NOVA REPORT] Failed to generate proposal:", proposalError);
-        // Continue without proposal if generation fails
+        // Never expose error details to client
+        if (process.env.NODE_ENV === "development") {
+          console.error("[NOVA REPORT] Failed to generate proposal:", proposalError);
+        }
         proposalDocument = "Proposal generation failed. See transcript below.";
       }
     }
@@ -86,7 +101,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       "",
       `Locale: ${safeLocale}`,
       `Generated at: ${now.toISOString()}`,
-      userEmail ? `Client Email: ${userEmail}` : "Client Email: Not provided",
+      sanitizedEmail ? `Client Email: ${sanitizedEmail}` : "Client Email: Not provided",
       "",
       "=".repeat(60),
       "TECHNICAL PROPOSAL DOCUMENT",
@@ -117,17 +132,22 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     return new Response(JSON.stringify({ ok: true, proposalGenerated: !!proposalDocument }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
     });
   } catch (error) {
-    console.error("[NOVA REPORT] Failed to send report:", error);
+    // Never expose error details to client
+    if (process.env.NODE_ENV === "development") {
+      console.error("[NOVA REPORT] Failed to send report:", error);
+    }
     return new Response(
       JSON.stringify({
         ok: false,
-        error: "Failed to send report email.",
+        error: "Service temporarily unavailable",
       }),
       { status: 500, headers: { "Content-Type": "application/json" } }
     );
   }
 }
-
