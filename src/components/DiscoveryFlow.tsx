@@ -431,7 +431,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 initial={{ scale: 0.95, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="relative w-full max-w-xs sm:max-w-sm aspect-[4/5] rounded-2xl overflow-hidden"
+                className="relative w-full max-w-[180px] sm:max-w-[220px] aspect-square rounded-2xl overflow-hidden"
               >
                 <Image
                   src="/nova-loading.png"
