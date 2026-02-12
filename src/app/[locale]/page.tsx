@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <main className="relative flex min-h-[100dvh] flex-col items-center justify-between overflow-hidden bg-transparent">
       {/* Header */}
-      <header className="pointer-events-none fixed left-0 right-0 top-0 z-20 flex items-center justify-between px-5 py-4 sm:px-10 sm:py-6">
+      <header className="pointer-events-none fixed left-0 right-0 top-0 z-20 flex items-center justify-between px-5 sm:px-10 pt-[calc(1rem+env(safe-area-inset-top))] pb-4 sm:py-6">
         <button
           onClick={() => setShowDiscovery(false)}
           className="pointer-events-auto flex items-center gap-2 text-white"
