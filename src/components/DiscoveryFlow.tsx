@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
 
 interface ChatMessage {
   id: string;
@@ -420,50 +421,36 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           {/* Initial loading state - show while waiting for first NOVA message */}
           {messages.length === 0 && isStreaming && (
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center justify-center py-12 space-y-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center justify-center py-12 space-y-6 min-h-[60vh]"
             >
-              {/* Animated NOVA logo pulse */}
+              {/* NOVA portrait image */}
               <motion.div
-                animate={{ 
-                  scale: [1, 1.05, 1],
-                  opacity: [0.7, 1, 0.7],
-                }}
-                transition={{ 
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="relative"
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-full max-w-md aspect-[4/5] rounded-2xl overflow-hidden"
               >
-                <div className="w-16 h-16 rounded-2xl liquid-glass-card flex items-center justify-center">
-                  <span className="text-3xl">✨</span>
-                </div>
-                {/* Orbiting dots */}
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <div className="absolute top-0 left-1/2 w-2 h-2 rounded-full bg-violet-400/60 -translate-x-1/2 -translate-y-2" />
-                </motion.div>
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <div className="absolute bottom-0 left-1/2 w-2 h-2 rounded-full bg-blue-400/60 -translate-x-1/2 translate-y-2" />
-                </motion.div>
+                <Image
+                  src="/nova-loading.png"
+                  alt="NOVA"
+                  fill
+                  className="object-cover"
+                  priority
+                  quality={90}
+                />
+                {/* Subtle overlay gradient for text readability */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/60 via-transparent to-transparent" />
               </motion.div>
 
               {/* Animated text */}
-              <div className="space-y-2 text-center">
+              <div className="space-y-2 text-center px-4">
                 <motion.p
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 2, repeat: Infinity }}
-                  className="text-[13px] text-white/60"
+                  className="text-[14px] text-white/70 font-medium"
                 >
                   NOVA is preparing your session...
                 </motion.p>
@@ -471,17 +458,17 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                   <motion.div
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
-                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/60"
                   />
                   <motion.div
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
-                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/60"
                   />
                   <motion.div
                     animate={{ opacity: [0.3, 1, 0.3] }}
                     transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
-                    className="w-1.5 h-1.5 rounded-full bg-violet-400/50"
+                    className="w-1.5 h-1.5 rounded-full bg-violet-400/60"
                   />
                 </div>
               </div>
