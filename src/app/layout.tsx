@@ -78,6 +78,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${novaSans.variable} antialiased bg-[#050508] text-white`}
+        style={{ minHeight: '-webkit-fill-available' }}
       >
         <script
           dangerouslySetInnerHTML={{

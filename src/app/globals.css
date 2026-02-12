@@ -32,8 +32,12 @@ body {
 html {
   /* Use dvh for mobile browsers that hide/show address bar */
   min-height: 100dvh;
+  height: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Force background to extend on iOS Safari */
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
