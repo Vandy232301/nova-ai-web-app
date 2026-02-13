@@ -24,11 +24,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://nova-ai-web-app.vercel.app"),
   icons: {
     icon: [
-      { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-32.png?v=2", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16.png?v=2", sizes: "16x16", type: "image/png" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" },
     ],
   },
   openGraph: {
@@ -63,9 +64,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <head>
-        <link rel="icon" href="/favicon-32.png" sizes="32x32" />
-        <link rel="icon" href="/favicon-16.png" sizes="16x16" />
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/favicon-32.png?v=2" sizes="32x32" />
+        <link rel="icon" type="image/png" href="/favicon-16.png?v=2" sizes="16x16" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
