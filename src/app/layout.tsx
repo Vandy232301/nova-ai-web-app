@@ -90,7 +90,7 @@ export default function RootLayout({
           height: '100vh',
           width: '100vw',
           position: 'relative',
-          backgroundColor: '#050508',
+          backgroundColor: 'transparent',
           margin: 0,
           padding: 0,
         }}

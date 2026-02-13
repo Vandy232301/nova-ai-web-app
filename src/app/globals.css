@@ -39,8 +39,8 @@ html {
   /* Force background to extend on iOS Safari */
   width: 100%;
   overflow-x: hidden;
-  /* Set background color to match gradient base */
-  background-color: #050508;
+  /* Transparent background - gradient layer provides the background */
+  background-color: transparent;
   /* Extend background into safe-area zones */
   margin: 0;
   padding: 0;
@@ -51,8 +51,8 @@ html {
 body {
   min-height: 100dvh;
   min-height: -webkit-fill-available;
-  /* Set background color to match gradient base */
-  background-color: #050508;
+  /* Transparent background - gradient layer provides the background */
+  background-color: transparent;
   color: var(--nova-text-primary);
   /* Prevent overscroll bounce on iOS */
   overscroll-behavior: none;
@@ -412,6 +412,8 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     overflow-x: hidden !important;
+    /* Transparent background - gradient layer provides the background */
+    background-color: transparent !important;
   }
   
   .nova-gradient-layer {
@@ -571,10 +573,10 @@ body {
     display: block !important;
   }
   
-  /* Keep backgrounds matching gradient base */
+  /* Keep backgrounds transparent so gradient shows through */
   html,
   body {
-    background-color: #050508 !important;
+    background-color: transparent !important;
   }
 }
 
@@ -590,7 +592,8 @@ body {
     min-height: -webkit-fill-available !important;
     margin: 0 !important;
     padding: 0 !important;
-    background-color: #050508 !important;
+    /* Transparent background - gradient layer provides the background */
+    background-color: transparent !important;
   }
   
   .nova-gradient-layer {
