@@ -114,7 +114,8 @@ export default function RootLayout({
           }}
           aria-hidden="true"
         />
-        <div className="nova-gradient-layer" aria-hidden="true" />
+        {/* Animated gradient background layer */}
+        <div className="nova-gradient-layer" aria-hidden="true" style={{ display: 'block', opacity: 1, visibility: 'visible' }} />
         {children}
       </body>
     </html>

@@ -100,12 +100,13 @@ body::before {
   width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
   height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
   z-index: -1;
-  contain: strict;
-  /* Force gradient visibility in dark mode */
+  contain: layout style paint;
+  /* Force gradient visibility */
   opacity: 1 !important;
   visibility: visible !important;
+  display: block !important;
 }
 
 .nova-gradient-layer::before,
@@ -115,6 +116,10 @@ body::before {
   inset: -50%;
   will-change: transform;
   transform: translateZ(0);
+  /* Ensure pseudo-elements are visible */
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .nova-gradient-layer::before {
@@ -398,6 +403,7 @@ body::before {
     filter: blur(80px);
     opacity: 1 !important;
     visibility: visible !important;
+    display: block !important;
   }
 
   .nova-gradient-layer::after {
