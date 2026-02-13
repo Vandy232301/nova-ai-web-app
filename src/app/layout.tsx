@@ -87,8 +87,12 @@ export default function RootLayout({
         className={`${novaSans.variable} antialiased text-white`}
         style={{ 
           minHeight: '-webkit-fill-available',
+          height: '100vh',
+          width: '100vw',
           position: 'relative',
-          backgroundColor: 'transparent',
+          backgroundColor: '#050508',
+          margin: 0,
+          padding: 0,
         }}
       >
         <script
