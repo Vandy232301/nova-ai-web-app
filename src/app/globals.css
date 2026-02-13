@@ -118,6 +118,7 @@ body {
     radial-gradient(circle at 40% 15%, rgba(108, 92, 231, 0.8) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 40%),
     radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.25) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 35%),
     radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 40%);
+  /* Responsive blur - smaller on mobile for better performance */
   filter: blur(120px);
   animation: nova-gradient-rotate 30s linear infinite, nova-gradient-pulse 15s ease-in-out infinite;
   /* Force visibility in dark mode */
@@ -366,6 +367,17 @@ body {
     0 0 0 0.5px rgba(255,255,255,0.15);
 }
 
+/* Tablet optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .nova-gradient-layer::before {
+    filter: blur(100px);
+  }
+  
+  .nova-gradient-layer::after {
+    filter: blur(90px);
+  }
+}
+
 /* Mobile performance + touch optimizations */
 @media (max-width: 640px) {
   .liquid-glass,
@@ -394,22 +406,67 @@ body {
     min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
   }
 
-  /* Stop all gradient background animations on mobile but keep gradients visible */
+  /* Optimized gradient for mobile - fewer layers, adjusted blur, better positioning */
   .nova-gradient-layer::before {
     animation: none !important;
-    filter: blur(80px);
+    /* Reduced blur for mobile - better performance and visibility */
+    filter: blur(60px);
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
+    /* Optimized gradient positions for mobile screens */
+    background:
+      radial-gradient(circle at 30% 25%, rgba(108, 92, 231, 0.9) 0%, rgba(108, 92, 231, 0.4) 20%, rgba(0, 0, 0, 0.95) 40%, transparent 60%),
+      radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.9) 0%, rgba(59, 130, 246, 0.4) 20%, rgba(0, 0, 0, 0.95) 40%, transparent 60%),
+      radial-gradient(circle at 50% 75%, rgba(59, 130, 246, 0.8) 0%, rgba(59, 130, 246, 0.35) 18%, rgba(0, 0, 0, 0.95) 38%, transparent 58%),
+      radial-gradient(circle at 20% 70%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.93) 30%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.8) 0%, rgba(0, 0, 0, 0.93) 30%, transparent 50%);
   }
 
   .nova-gradient-layer::after {
     display: block !important;
     animation: none !important;
-    filter: blur(70px);
+    /* Reduced blur for mobile */
+    filter: blur(50px);
     opacity: 1 !important;
     visibility: visible !important;
+    /* Simplified gradient for mobile - fewer layers */
+    background:
+      radial-gradient(circle at 60% 40%, rgba(108, 92, 231, 0.85) 0%, rgba(0, 0, 0, 0.93) 25%, transparent 45%),
+      radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.93) 25%, transparent 45%),
+      radial-gradient(circle at 75% 60%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.93) 30%, transparent 50%);
   }
+}
+
+/* Small mobile devices (portrait phones) */
+@media (max-width: 480px) {
+  .nova-gradient-layer::before {
+    filter: blur(50px);
+    /* Even more optimized for small screens */
+    background:
+      radial-gradient(circle at 35% 30%, rgba(108, 92, 231, 0.85) 0%, rgba(108, 92, 231, 0.35) 22%, rgba(0, 0, 0, 0.94) 42%, transparent 62%),
+      radial-gradient(circle at 65% 35%, rgba(59, 130, 246, 0.85) 0%, rgba(59, 130, 246, 0.35) 22%, rgba(0, 0, 0, 0.94) 42%, transparent 62%),
+      radial-gradient(circle at 50% 80%, rgba(59, 130, 246, 0.75) 0%, rgba(0, 0, 0, 0.92) 35%, transparent 55%);
+  }
+  
+  .nova-gradient-layer::after {
+    filter: blur(45px);
+    background:
+      radial-gradient(circle at 60% 45%, rgba(108, 92, 231, 0.8) 0%, rgba(0, 0, 0, 0.92) 28%, transparent 48%),
+      radial-gradient(circle at 30% 80%, rgba(59, 130, 246, 0.85) 0%, rgba(0, 0, 0, 0.92) 28%, transparent 48%);
+  }
+}
+
+/* Large screens - enhance gradient */
+@media (min-width: 1920px) {
+  .nova-gradient-layer::before {
+    filter: blur(140px);
+  }
+  
+  .nova-gradient-layer::after {
+    filter: blur(120px);
+  }
+}
 
   /* Hide heavy decorative blurs on mobile */
   .nova-heavy-blur {
