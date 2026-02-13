@@ -436,6 +436,16 @@ body {
       radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.93) 25%, transparent 45%),
       radial-gradient(circle at 75% 60%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.93) 30%, transparent 50%);
   }
+
+  /* Hide heavy decorative blurs on mobile */
+  .nova-heavy-blur {
+    display: none !important;
+  }
+
+  /* Simplify framer-motion on mobile — disable transform animations on decorative elements */
+  .nova-orbit {
+    animation: none !important;
+  }
 }
 
 /* Small mobile devices (portrait phones) */
@@ -465,17 +475,6 @@ body {
   
   .nova-gradient-layer::after {
     filter: blur(120px);
-  }
-}
-
-  /* Hide heavy decorative blurs on mobile */
-  .nova-heavy-blur {
-    display: none !important;
-  }
-
-  /* Simplify framer-motion on mobile — disable transform animations on decorative elements */
-  .nova-orbit {
-    animation: none !important;
   }
 }
 
