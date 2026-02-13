@@ -269,27 +269,6 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           fullContent.toLowerCase().includes("next step")
         ) {
           setShowSummary(true);
-
-          // Fire-and-forget: send discovery report email once per session
-          if (!hasSentReport.current) {
-            hasSentReport.current = true;
-            (async () => {
-              try {
-                await fetch("/api/discovery/report", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({
-                    locale,
-                    messages: allMessages,
-                    finalAssistantMessage: fullContent,
-                    userEmail: userEmail || undefined,
-                  }),
-                });
-              } catch (err) {
-                console.error("Failed to send discovery report:", err);
-              }
-            })();
-          }
         }
 
         // Detect and show quick replies
@@ -597,6 +576,33 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                     // Mark as scheduled when user clicks (they'll complete booking externally)
                     if (typeof window !== "undefined") {
                       sessionStorage.setItem("nova_scheduled", "true");
+                    }
+                    
+                    // Send discovery report email to NOVA team when user schedules call
+                    if (!hasSentReport.current) {
+                      hasSentReport.current = true;
+                      (async () => {
+                        try {
+                          // Get the final assistant message (summary) - find last assistant message
+                          const assistantMessages = messages.filter((m) => m.role === "assistant");
+                          const finalMessage = assistantMessages.length > 0 
+                            ? assistantMessages[assistantMessages.length - 1].content 
+                            : "";
+                          
+                          await fetch("/api/discovery/report", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              locale,
+                              messages: messages,
+                              finalAssistantMessage: finalMessage,
+                              userEmail: userEmail || undefined,
+                            }),
+                          });
+                        } catch (err) {
+                          console.error("Failed to send discovery report:", err);
+                        }
+                      })();
                     }
                   }}
                   className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98]"
