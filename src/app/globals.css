@@ -76,12 +76,15 @@ body {
 .nova-gradient-layer {
   position: fixed;
   /* Extend background into safe-area zones (status bar and navigation bar) */
+  /* Use negative margins to extend beyond viewport into safe-area */
   top: calc(-1 * env(safe-area-inset-top, 0px));
   left: calc(-1 * env(safe-area-inset-left, 0px));
   right: calc(-1 * env(safe-area-inset-right, 0px));
   bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
-  width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
-  height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  width: calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  height: calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  /* Also use 100dvh for mobile browsers */
+  min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
   overflow: visible;
   z-index: -1;
@@ -378,6 +381,17 @@ body {
     /* Remove backdrop-filter on mobile — major performance gain */
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+
+  /* Extend gradient layer to cover entire screen including safe-area zones */
+  .nova-gradient-layer {
+    top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
+    left: calc(-1 * env(safe-area-inset-left, 0px)) !important;
+    right: calc(-1 * env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
+    width: calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)) !important;
+    height: calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   /* Stop all gradient background animations on mobile but keep gradients visible */
