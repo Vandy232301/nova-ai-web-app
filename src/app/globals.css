@@ -75,14 +75,16 @@ body {
 
 .nova-gradient-layer {
   position: fixed;
-  /* Start from viewport edges */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100vw;
-  height: 100vh;
-  min-height: 100dvh;
+  /* Extend background into safe-area zones (status bar and navigation bar) */
+  /* Use negative margins to extend beyond viewport into safe-area */
+  top: calc(-1 * env(safe-area-inset-top, 0px));
+  left: calc(-1 * env(safe-area-inset-left, 0px));
+  right: calc(-1 * env(safe-area-inset-right, 0px));
+  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
+  width: calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  height: calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  /* Also use 100dvh for mobile browsers */
+  min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
   overflow: visible;
   z-index: -1;
@@ -395,7 +397,6 @@ body {
 
   /* Extend gradient layer to cover entire screen including safe-area zones */
   .nova-gradient-layer {
-    /* Extend beyond viewport into safe-area zones using negative margins */
     top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
     left: calc(-1 * env(safe-area-inset-left, 0px)) !important;
     right: calc(-1 * env(safe-area-inset-right, 0px)) !important;
@@ -403,21 +404,6 @@ body {
     width: calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)) !important;
     height: calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
     min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
-    /* Ensure it covers the entire screen */
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  
-  /* Extend pseudo-elements to cover safe-area zones */
-  .nova-gradient-layer::before,
-  .nova-gradient-layer::after {
-    /* Extend beyond parent to cover safe-area */
-    top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
-    left: calc(-1 * env(safe-area-inset-left, 0px)) !important;
-    right: calc(-1 * env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
-    width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)) !important;
-    height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   /* Optimized gradient for mobile - fewer layers, adjusted blur, better positioning */
