@@ -101,22 +101,8 @@ export default function RootLayout({
             `,
           }}
         />
-        {/* Animated gradient background layer - must be above solid background */}
+        {/* Animated gradient background layer - provides the background */}
         <div className="nova-gradient-layer" aria-hidden="true" style={{ display: 'block', opacity: 1, visibility: 'visible', zIndex: -1 }} />
-        {/* Full-screen background wrapper that extends into safe-area - behind gradient */}
-        <div 
-          className="fixed inset-0 bg-[#050508]"
-          style={{
-            top: 'calc(-1 * env(safe-area-inset-top, 0px))',
-            left: 'calc(-1 * env(safe-area-inset-left, 0px))',
-            right: 'calc(-1 * env(safe-area-inset-right, 0px))',
-            bottom: 'calc(-1 * env(safe-area-inset-bottom, 0px))',
-            width: 'calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px))',
-            height: 'calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px))',
-            zIndex: -2,
-          }}
-          aria-hidden="true"
-        />
         {children}
       </body>
     </html>

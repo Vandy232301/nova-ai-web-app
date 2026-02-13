@@ -64,25 +64,7 @@ body {
 }
 
 /* Create a full-screen background wrapper that extends into safe-area */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--nova-bg-primary);
-  z-index: -2;
-  /* Extend into safe-area zones */
-  top: calc(-1 * env(safe-area-inset-top, 0px));
-  left: calc(-1 * env(safe-area-inset-left, 0px));
-  right: calc(-1 * env(safe-area-inset-right, 0px));
-  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
-  width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
-  height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
-  /* Force background color even in dark mode */
-  background-color: #050508 !important;
-}
+/* Removed body::before - gradient layer provides the background */
 
 /* Selection color matching brand */
 ::selection {
@@ -470,10 +452,6 @@ body::before {
   
   html,
   body {
-    background-color: #050508 !important;
-  }
-  
-  body::before {
     background-color: #050508 !important;
   }
 }
