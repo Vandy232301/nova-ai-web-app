@@ -39,8 +39,8 @@ html {
   /* Force background to extend on iOS Safari */
   width: 100%;
   overflow-x: hidden;
-  /* Ensure background extends to screen edges */
-  background-color: var(--nova-bg-primary);
+  /* Transparent background - gradient layer provides the background */
+  background-color: transparent;
   /* Extend background into safe-area zones */
   margin: 0;
   padding: 0;
@@ -49,7 +49,8 @@ html {
 body {
   min-height: 100dvh;
   min-height: -webkit-fill-available;
-  background-color: var(--nova-bg-primary);
+  /* Transparent background - gradient layer provides the background */
+  background-color: transparent;
   color: var(--nova-text-primary);
   /* Prevent overscroll bounce on iOS */
   overscroll-behavior: none;
@@ -450,9 +451,10 @@ body {
     display: block !important;
   }
   
+  /* Keep backgrounds transparent so gradient shows through */
   html,
   body {
-    background-color: #050508 !important;
+    background-color: transparent !important;
   }
 }
 

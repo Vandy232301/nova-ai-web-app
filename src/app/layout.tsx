@@ -84,10 +84,11 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body
-        className={`${novaSans.variable} antialiased bg-[#050508] text-white`}
+        className={`${novaSans.variable} antialiased text-white`}
         style={{ 
           minHeight: '-webkit-fill-available',
           position: 'relative',
+          backgroundColor: 'transparent',
         }}
       >
         <script
