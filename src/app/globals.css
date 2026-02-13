@@ -80,6 +80,8 @@ body::before {
   bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
   width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
   height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
+  /* Force background color even in dark mode */
+  background-color: #050508 !important;
 }
 
 /* Selection color matching brand */
@@ -101,6 +103,9 @@ body::before {
   overflow: hidden;
   z-index: -1;
   contain: strict;
+  /* Force gradient visibility in dark mode */
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .nova-gradient-layer::before,
@@ -124,6 +129,9 @@ body::before {
     radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 40%);
   filter: blur(120px);
   animation: nova-gradient-rotate 30s linear infinite, nova-gradient-pulse 15s ease-in-out infinite;
+  /* Force visibility in dark mode */
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .nova-gradient-layer::after {
@@ -136,7 +144,8 @@ body::before {
     radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.8) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 40%);
   filter: blur(100px);
   animation: nova-gradient-rotate-reverse 35s linear infinite, nova-gradient-pulse-delayed 18s ease-in-out infinite;
-  opacity: 1;
+  opacity: 1 !important;
+  visibility: visible !important;
   will-change: transform;
   contain: layout style paint;
 }
@@ -383,15 +392,20 @@ body::before {
     -webkit-backdrop-filter: none !important;
   }
 
-  /* Stop all gradient background animations on mobile */
+  /* Stop all gradient background animations on mobile but keep gradients visible */
   .nova-gradient-layer::before {
     animation: none !important;
     filter: blur(80px);
-    opacity: 0.6;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
   .nova-gradient-layer::after {
-    display: none !important;
+    display: block !important;
+    animation: none !important;
+    filter: blur(70px);
+    opacity: 1 !important;
+    visibility: visible !important;
   }
 
   /* Hide heavy decorative blurs on mobile */
@@ -435,6 +449,26 @@ body::before {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+
+/* Force gradient visibility in dark mode */
+@media (prefers-color-scheme: dark) {
+  .nova-gradient-layer,
+  .nova-gradient-layer::before,
+  .nova-gradient-layer::after {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+  }
+  
+  html,
+  body {
+    background-color: #050508 !important;
+  }
+  
+  body::before {
+    background-color: #050508 !important;
   }
 }
 
