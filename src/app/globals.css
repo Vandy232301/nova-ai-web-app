@@ -41,6 +41,9 @@ html {
   overflow-x: hidden;
   /* Ensure background extends to screen edges */
   background-color: var(--nova-bg-primary);
+  /* Extend background into safe-area zones */
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -53,13 +56,30 @@ body {
   /* Smooth font rendering */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Safe area padding for notched devices - but background extends beyond */
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
-  /* Ensure background extends to edges */
+  /* Ensure background extends to edges - no padding that creates gaps */
   position: relative;
+  /* Extend background to cover safe-area zones */
+  margin: 0;
+  padding: 0;
+}
+
+/* Create a full-screen background wrapper that extends into safe-area */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--nova-bg-primary);
+  z-index: -2;
+  /* Extend into safe-area zones */
+  top: calc(-1 * env(safe-area-inset-top, 0px));
+  left: calc(-1 * env(safe-area-inset-left, 0px));
+  right: calc(-1 * env(safe-area-inset-right, 0px));
+  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
+  width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
 }
 
 /* Selection color matching brand */
@@ -71,15 +91,15 @@ body {
 .nova-gradient-layer {
   position: fixed;
   /* Extend background into safe-area zones (status bar and navigation bar) */
-  top: calc(-1 * env(safe-area-inset-top));
-  left: calc(-1 * env(safe-area-inset-left));
-  right: calc(-1 * env(safe-area-inset-right));
-  bottom: calc(-1 * env(safe-area-inset-bottom));
-  width: calc(100% + env(safe-area-inset-left) + env(safe-area-inset-right));
-  height: calc(100% + env(safe-area-inset-top) + env(safe-area-inset-bottom));
+  top: calc(-1 * env(safe-area-inset-top, 0px));
+  left: calc(-1 * env(safe-area-inset-left, 0px));
+  right: calc(-1 * env(safe-area-inset-right, 0px));
+  bottom: calc(-1 * env(safe-area-inset-bottom, 0px));
+  width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px));
+  height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px));
   pointer-events: none;
   overflow: hidden;
-  z-index: 0;
+  z-index: -1;
   contain: strict;
 }
 
