@@ -441,16 +441,16 @@ body {
     height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
   }
 
-  /* Optimized gradient for mobile - disable animations for performance, match desktop colors */
+  /* Optimized gradient for mobile - disable animations but use exact same gradient as desktop */
   .nova-gradient-layer::before {
     /* Disable animations on mobile for better performance */
     animation: none !important;
-    /* Reduced blur for mobile - better performance and visibility */
-    filter: blur(60px);
+    /* Slightly reduced blur for mobile performance but keep it close to desktop */
+    filter: blur(100px);
     opacity: 1 !important;
     visibility: visible !important;
     display: block !important;
-    /* Use same gradient as desktop but with adjusted blur for performance */
+    /* Use EXACT same gradient as desktop - no modifications */
     background:
       radial-gradient(circle at 20% 30%, rgba(108, 92, 231, 1) 0%, rgba(108, 92, 231, 0.5) 15%, rgba(0, 0, 0, 0.99) 35%, transparent 55%),
       radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 1) 0%, rgba(59, 130, 246, 0.55) 15%, rgba(0, 0, 0, 0.99) 35%, transparent 55%),
@@ -466,11 +466,11 @@ body {
     display: block !important;
     /* Disable animations on mobile for better performance */
     animation: none !important;
-    /* Reduced blur for mobile */
-    filter: blur(50px);
+    /* Slightly reduced blur for mobile performance but keep it close to desktop */
+    filter: blur(90px);
     opacity: 1 !important;
     visibility: visible !important;
-    /* Use same gradient as desktop */
+    /* Use EXACT same gradient as desktop - no modifications */
     background:
       radial-gradient(circle at 60% 40%, rgba(108, 92, 231, 0.95) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 45%),
       radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 1) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 45%),
@@ -494,28 +494,35 @@ body {
 /* Small mobile devices (portrait phones) */
 @media (max-width: 480px) {
   .nova-gradient-layer::before {
-    filter: blur(50px);
+    /* Slightly more reduced blur for very small screens but still close to desktop */
+    filter: blur(90px);
     /* Disable animations on small screens for better performance */
     animation: none !important;
-    /* Use same gradient as desktop for consistent colors */
+    /* Use EXACT same gradient as desktop - no modifications */
     background:
       radial-gradient(circle at 20% 30%, rgba(108, 92, 231, 1) 0%, rgba(108, 92, 231, 0.5) 15%, rgba(0, 0, 0, 0.99) 35%, transparent 55%),
       radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 1) 0%, rgba(59, 130, 246, 0.55) 15%, rgba(0, 0, 0, 0.99) 35%, transparent 55%),
       radial-gradient(circle at 50% 70%, rgba(59, 130, 246, 1) 0%, rgba(59, 130, 246, 0.5) 15%, rgba(0, 0, 0, 0.99) 35%, transparent 55%),
       radial-gradient(circle at 15% 60%, rgba(108, 92, 231, 0.85) 0%, rgba(0, 0, 0, 0.98) 25%, transparent 45%),
-      radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.99) 25%, transparent 45%);
+      radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.99) 25%, transparent 45%),
+      radial-gradient(circle at 40% 15%, rgba(108, 92, 231, 0.8) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 40%),
+      radial-gradient(circle at 70% 50%, rgba(255, 255, 255, 0.25) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 35%),
+      radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.75) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 40%);
   }
   
   .nova-gradient-layer::after {
-    filter: blur(45px);
+    /* Slightly more reduced blur for very small screens but still close to desktop */
+    filter: blur(80px);
     /* Disable animations on small screens for better performance */
     animation: none !important;
-    /* Use same gradient as desktop for consistent colors */
+    /* Use EXACT same gradient as desktop - no modifications */
     background:
       radial-gradient(circle at 60% 40%, rgba(108, 92, 231, 0.95) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 45%),
       radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 1) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 45%),
       radial-gradient(circle at 90% 60%, rgba(108, 92, 231, 0.85) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 45%),
-      radial-gradient(circle at 10% 25%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 45%);
+      radial-gradient(circle at 10% 25%, rgba(59, 130, 246, 0.9) 0%, rgba(0, 0, 0, 0.99) 20%, transparent 45%),
+      radial-gradient(circle at 75% 15%, rgba(255, 255, 255, 0.2) 0%, rgba(0, 0, 0, 0.99) 12%, transparent 35%),
+      radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.8) 0%, rgba(0, 0, 0, 0.99) 15%, transparent 40%);
   }
 }
 
