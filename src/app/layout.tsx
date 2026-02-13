@@ -15,6 +15,7 @@ export const viewport: Viewport = {
   maximumScale: 5,
   themeColor: "#050508",
   viewportFit: "cover",
+  height: "device-height",
 };
 
 export const metadata: Metadata = {
@@ -84,7 +85,10 @@ export default function RootLayout({
       </head>
       <body
         className={`${novaSans.variable} antialiased bg-[#050508] text-white`}
-        style={{ minHeight: '-webkit-fill-available' }}
+        style={{ 
+          minHeight: '-webkit-fill-available',
+          position: 'relative',
+        }}
       >
         <script
           dangerouslySetInnerHTML={{
