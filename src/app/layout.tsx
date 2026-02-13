@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 5,
   themeColor: "#050508",
-  viewportFit: "cover",
+  viewportFit: "cover", // Enables full-screen coverage when installed as PWA
   height: "device-height",
 };
 

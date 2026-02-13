@@ -571,10 +571,48 @@ body {
     display: block !important;
   }
   
-  /* Keep backgrounds transparent so gradient shows through */
+  /* Keep backgrounds matching gradient base */
   html,
   body {
-    background-color: transparent !important;
+    background-color: #050508 !important;
+  }
+}
+
+/* PWA Standalone Mode - Full screen coverage */
+@media all and (display-mode: standalone) {
+  html,
+  body {
+    /* Full screen coverage in PWA mode */
+    width: 100vw !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    min-height: -webkit-fill-available !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background-color: #050508 !important;
+  }
+  
+  .nova-gradient-layer {
+    /* Extend to cover entire screen including safe-area in PWA mode */
+    top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
+    left: calc(-1 * env(safe-area-inset-left, 0px)) !important;
+    right: calc(-1 * env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
+    width: calc(100vw + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)) !important;
+    height: calc(100vh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(100dvh + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  
+  .nova-gradient-layer::before,
+  .nova-gradient-layer::after {
+    /* Extend pseudo-elements to cover safe-area in PWA mode */
+    top: calc(-1 * env(safe-area-inset-top, 0px)) !important;
+    left: calc(-1 * env(safe-area-inset-left, 0px)) !important;
+    right: calc(-1 * env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(-1 * env(safe-area-inset-bottom, 0px)) !important;
+    width: calc(100% + env(safe-area-inset-left, 0px) + env(safe-area-inset-right, 0px)) !important;
+    height: calc(100% + env(safe-area-inset-top, 0px) + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
