@@ -28,10 +28,61 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const [showSummary, setShowSummary] = useState(false);
   const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
   const [isScheduled, setIsScheduled] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    heardFrom: "",
+  });
+  const [formErrors, setFormErrors] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    heardFrom: "",
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
   const hasSentReport = useRef(false);
+  const lastMessageTime = useRef<number>(0);
+  const messageCount = useRef<number>(0);
+  const sessionStartTime = useRef<number>(Date.now());
+
+  // Client-side rate limiting: minimum 500ms between messages (barely noticeable)
+  // These limits prevent rapid automated requests while allowing natural conversation
+  const MESSAGE_COOLDOWN_MS = 500; // Half a second - natural typing speed is slower
+  const MAX_MESSAGES_PER_SESSION = 60; // Increased for longer discovery conversations
+  const MAX_MESSAGE_LENGTH = 2000; // Very generous - normal messages are much shorter
+
+  // Validation functions
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email) && email.length <= 254; // RFC 5321 max length
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    // Remove all non-digit characters except + for international format
+    const cleaned = phone.replace(/[^\d+]/g, "");
+    // Valid phone: 7-15 digits (international format), can start with +
+    const phoneRegex = /^\+?[1-9]\d{6,14}$/;
+    return phoneRegex.test(cleaned) && cleaned.length >= 7 && cleaned.length <= 15;
+  };
+
+  const validateFullName = (name: string): boolean => {
+    // Name should be 2-100 characters, contain only letters, spaces, hyphens, apostrophes
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]{2,100}$/;
+    return nameRegex.test(name.trim());
+  };
+
+  const sanitizeInput = (input: string): string => {
+    // Remove potential XSS vectors
+    return input
+      .replace(/<script[^>]*>.*?<\/script>/gi, "")
+      .replace(/<[^>]+>/g, "")
+      .trim()
+      .slice(0, 500); // Max length limit
+  };
 
   const scrollToBottom = useCallback(() => {
     if (!scrollRef.current) return;
@@ -202,7 +253,39 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           }),
         });
 
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        // Handle rate limiting errors
+        if (response.status === 429) {
+          const retryAfter = response.headers.get("Retry-After");
+          const waitTime = retryAfter ? parseInt(retryAfter, 10) : 60;
+          setIsStreaming(false);
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `assistant-rate-limit-${Date.now()}`,
+              role: "assistant",
+              content: `Rate limit exceeded. Please wait ${waitTime} second${waitTime > 1 ? "s" : ""} before sending another message.`,
+              createdAt: Date.now(),
+            },
+          ]);
+          return;
+        }
+
+        if (!response.ok) {
+          if (response.status === 400) {
+            setIsStreaming(false);
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: `assistant-error-${Date.now()}`,
+                role: "assistant",
+                content: "Invalid request. Please check your message and try again.",
+                createdAt: Date.now(),
+              },
+            ]);
+            return;
+          }
+          throw new Error(`HTTP ${response.status}`);
+        }
         if (!response.body) { setIsStreaming(false); return; }
 
         const reader = response.body.getReader();
@@ -301,6 +384,19 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     hasSentReport.current = true;
     
     try {
+      // Get form data from sessionStorage if available
+      let formDataFromStorage = null;
+      if (typeof window !== "undefined") {
+        const stored = sessionStorage.getItem("nova_form_data");
+        if (stored) {
+          try {
+            formDataFromStorage = JSON.parse(stored);
+          } catch (e) {
+            // Ignore parse errors
+          }
+        }
+      }
+
       // Get the final assistant message (summary) - find last assistant message
       const assistantMessages = messages.filter((m) => m.role === "assistant");
       const finalMessage = assistantMessages.length > 0 
@@ -314,7 +410,8 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           locale,
           messages: messages,
           finalAssistantMessage: finalMessage,
-          userEmail: undefined,
+          userEmail: formDataFromStorage?.email || undefined,
+          formData: formDataFromStorage || undefined,
         }),
       });
     } catch (err) {
@@ -408,12 +505,30 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   // Handle quick reply click
   const handleQuickReply = (label: string) => {
     if (isStreaming) return;
+
+    // Check cooldown
+    const now = Date.now();
+    const timeSinceLastMessage = now - lastMessageTime.current;
+    if (timeSinceLastMessage < MESSAGE_COOLDOWN_MS) {
+      return; // Silently ignore if too soon
+    }
+
+    // Check message count (very generous limit)
+    if (messageCount.current >= MAX_MESSAGES_PER_SESSION) {
+      alert(`You've reached the maximum number of messages for this session (${MAX_MESSAGES_PER_SESSION}). This helps us maintain service quality. Please refresh the page to start a new conversation.`);
+      return;
+    }
+
+    // Update tracking
+    lastMessageTime.current = now;
+    messageCount.current += 1;
+
     setQuickReplies([]);
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
       content: label,
-      createdAt: Date.now(),
+      createdAt: now,
     };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
@@ -424,14 +539,53 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   // Handle text submit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isStreaming) return;
+    const trimmedInput = input.trim();
+
+    // Validation checks
+    if (!trimmedInput || isStreaming) return;
+
+    // Check message length
+    if (trimmedInput.length > MAX_MESSAGE_LENGTH) {
+      alert(`Message too long. Maximum ${MAX_MESSAGE_LENGTH} characters allowed.`);
+      return;
+    }
+
+    // Check cooldown between messages (very short - only prevents rapid automated requests)
+    const now = Date.now();
+    const timeSinceLastMessage = now - lastMessageTime.current;
+    if (timeSinceLastMessage < MESSAGE_COOLDOWN_MS && lastMessageTime.current > 0) {
+      // Only show warning if user is trying to send messages too rapidly (likely automated)
+      // Normal users type slower than 500ms between messages
+      return; // Silently ignore - user won't notice this in normal usage
+    }
+
+    // Check total message count per session (very generous limit)
+    if (messageCount.current >= MAX_MESSAGES_PER_SESSION) {
+      alert(`You've reached the maximum number of messages for this session (${MAX_MESSAGES_PER_SESSION}). This helps us maintain service quality. Please refresh the page to start a new conversation.`);
+      return;
+    }
+
+    // Check for suspicious patterns (client-side)
+    const suspiciousPatterns = [
+      /(.)\1{20,}/, // Repeated characters
+      /.{500,}/, // Very long single word
+    ];
+
+    if (suspiciousPatterns.some((pattern) => pattern.test(trimmedInput))) {
+      alert("Invalid message format. Please rephrase your message.");
+      return;
+    }
+
+    // Update tracking
+    lastMessageTime.current = now;
+    messageCount.current += 1;
 
     setQuickReplies([]);
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
-      content: input.trim(),
-      createdAt: Date.now(),
+      content: trimmedInput,
+      createdAt: now,
     };
 
     const newMessages = [...messages, userMessage];
@@ -475,9 +629,13 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 className="flex flex-col items-center justify-center min-h-[60vh] pt-12 px-4"
               >
                 <div className="liquid-glass-card rounded-2xl px-6 py-8 space-y-4 max-w-md text-center">
-                  <h3 className="text-xl font-semibold text-white">{t("thankYouTitle")}</h3>
-                  <p className="text-[15px] leading-relaxed text-white/70">{t("thankYouMessage")}</p>
-                  <p className="text-[16px] font-medium text-violet-400 mt-4">{t("seeYouAtCall")}</p>
+                  <h3 className="text-xl font-semibold text-white">{t("thankYouTitle") || "Thank You!"}</h3>
+                  <p className="text-[15px] leading-relaxed text-white/70">
+                    {t("thankYouMessage") || "We've received your information and are excited to learn more about your project."}
+                  </p>
+                  <p className="text-[16px] font-medium text-violet-400 mt-4">
+                    {t("seeYouAtCall") || "We can't wait to meet you at the Discovery Call!"}
+                  </p>
                 </div>
               </motion.div>
             )}
@@ -609,31 +767,246 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
             )}
           </AnimatePresence>
 
-          {/* Schedule call CTA */}
+          {/* Schedule call form */}
           <AnimatePresence>
             {showSummary && !isScheduled && (
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="pt-4 text-center space-y-4"
+                className="pt-4 space-y-4"
               >
-                <a
-                  href={calendarLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => {
-                    // Mark that user is going to schedule (will be confirmed when they return)
-                    if (typeof window !== "undefined") {
-                      sessionStorage.setItem("nova_scheduled", "pending");
-                    }
-                  }}
-                  className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  {t("scheduleCall")}
-                  <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                </a>
-                <p className="text-[13px] text-white/25">{t("scheduleSubtitle")}</p>
+                <div className="liquid-glass-card rounded-2xl px-5 py-6 space-y-4">
+                  <h3 className="text-lg font-semibold text-white text-center mb-2">
+                    {t("scheduleCall") || "Schedule Your Discovery Call"}
+                  </h3>
+                  
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      
+                      // Validate all fields
+                      const errors = {
+                        fullName: "",
+                        email: "",
+                        phone: "",
+                        heardFrom: "",
+                      };
+
+                      // Validate Full Name
+                      if (!formData.fullName.trim()) {
+                        errors.fullName = t("formErrorRequired") || "This field is required";
+                      } else if (!validateFullName(formData.fullName)) {
+                        errors.fullName = t("formErrorInvalidName") || "Please enter a valid name (2-100 characters, letters only)";
+                      }
+
+                      // Validate Email
+                      if (!formData.email.trim()) {
+                        errors.email = t("formErrorRequired") || "This field is required";
+                      } else if (!validateEmail(formData.email)) {
+                        errors.email = t("formErrorInvalidEmail") || "Please enter a valid email address";
+                      }
+
+                      // Validate Phone
+                      if (!formData.phone.trim()) {
+                        errors.phone = t("formErrorRequired") || "This field is required";
+                      } else if (!validatePhone(formData.phone)) {
+                        errors.phone = t("formErrorInvalidPhone") || "Please enter a valid phone number (7-15 digits)";
+                      }
+
+                      // Validate Heard From
+                      if (!formData.heardFrom) {
+                        errors.heardFrom = t("formErrorRequired") || "Please select an option";
+                      }
+
+                      setFormErrors(errors);
+
+                      // If there are errors, don't submit
+                      if (Object.values(errors).some(err => err !== "")) {
+                        return;
+                      }
+
+                      // Sanitize form data before storing
+                      const sanitizedData = {
+                        fullName: sanitizeInput(formData.fullName),
+                        email: sanitizeInput(formData.email).toLowerCase(),
+                        phone: sanitizeInput(formData.phone),
+                        heardFrom: sanitizeInput(formData.heardFrom),
+                      };
+
+                      // Mark that user is going to schedule
+                      if (typeof window !== "undefined") {
+                        sessionStorage.setItem("nova_scheduled", "pending");
+                        sessionStorage.setItem("nova_form_data", JSON.stringify(sanitizedData));
+                      }
+                      // Open Google Calendar
+                      window.open(calendarLink, "_blank");
+                    }}
+                    className="space-y-4"
+                  >
+                    {/* Full Name */}
+                    <div>
+                      <label htmlFor="fullName" className="block text-[12px] text-white/60 mb-1.5">
+                        {t("formFullName") || "Full Name"}
+                      </label>
+                      <input
+                        id="fullName"
+                        type="text"
+                        required
+                        maxLength={100}
+                        value={formData.fullName}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData({ ...formData, fullName: value });
+                          // Clear error when user starts typing
+                          if (formErrors.fullName) {
+                            setFormErrors({ ...formErrors, fullName: "" });
+                          }
+                        }}
+                        onBlur={() => {
+                          if (formData.fullName && !validateFullName(formData.fullName)) {
+                            setFormErrors({
+                              ...formErrors,
+                              fullName: t("formErrorInvalidName") || "Please enter a valid name (2-100 characters, letters only)",
+                            });
+                          }
+                        }}
+                        placeholder={t("formFullNamePlaceholder") || "John Doe"}
+                        className={`w-full liquid-glass-input rounded-xl px-4 py-2.5 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:ring-2 ${
+                          formErrors.fullName ? "focus:ring-red-500/50 border-red-500/30" : "focus:ring-violet-500/50"
+                        }`}
+                      />
+                      {formErrors.fullName && (
+                        <p className="text-[11px] text-red-400 mt-1">{formErrors.fullName}</p>
+                      )}
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label htmlFor="email" className="block text-[12px] text-white/60 mb-1.5">
+                        {t("formEmail") || "Email"}
+                      </label>
+                      <input
+                        id="email"
+                        type="email"
+                        required
+                        maxLength={254}
+                        value={formData.email}
+                        onChange={(e) => {
+                          const value = e.target.value.toLowerCase();
+                          setFormData({ ...formData, email: value });
+                          // Clear error when user starts typing
+                          if (formErrors.email) {
+                            setFormErrors({ ...formErrors, email: "" });
+                          }
+                        }}
+                        onBlur={() => {
+                          if (formData.email && !validateEmail(formData.email)) {
+                            setFormErrors({
+                              ...formErrors,
+                              email: t("formErrorInvalidEmail") || "Please enter a valid email address",
+                            });
+                          }
+                        }}
+                        placeholder={t("formEmailPlaceholder") || "john@example.com"}
+                        className={`w-full liquid-glass-input rounded-xl px-4 py-2.5 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:ring-2 ${
+                          formErrors.email ? "focus:ring-red-500/50 border-red-500/30" : "focus:ring-violet-500/50"
+                        }`}
+                      />
+                      {formErrors.email && (
+                        <p className="text-[11px] text-red-400 mt-1">{formErrors.email}</p>
+                      )}
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label htmlFor="phone" className="block text-[12px] text-white/60 mb-1.5">
+                        {t("formPhone") || "Phone"}
+                      </label>
+                      <input
+                        id="phone"
+                        type="tel"
+                        required
+                        maxLength={20}
+                        value={formData.phone}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setFormData({ ...formData, phone: value });
+                          // Clear error when user starts typing
+                          if (formErrors.phone) {
+                            setFormErrors({ ...formErrors, phone: "" });
+                          }
+                        }}
+                        onBlur={() => {
+                          if (formData.phone && !validatePhone(formData.phone)) {
+                            setFormErrors({
+                              ...formErrors,
+                              phone: t("formErrorInvalidPhone") || "Please enter a valid phone number (7-15 digits)",
+                            });
+                          }
+                        }}
+                        placeholder={t("formPhonePlaceholder") || "+1 234 567 8900"}
+                        className={`w-full liquid-glass-input rounded-xl px-4 py-2.5 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:ring-2 ${
+                          formErrors.phone ? "focus:ring-red-500/50 border-red-500/30" : "focus:ring-violet-500/50"
+                        }`}
+                      />
+                      {formErrors.phone && (
+                        <p className="text-[11px] text-red-400 mt-1">{formErrors.phone}</p>
+                      )}
+                    </div>
+
+                    {/* Heard From */}
+                    <div>
+                      <label className="block text-[12px] text-white/60 mb-2">
+                        {t("formHeardFrom") || "How did you hear about NOVA?"}
+                      </label>
+                      <div className="space-y-2">
+                        {[
+                          t("formHeardFromGoogle") || "Google Search",
+                          t("formHeardFromSocial") || "Social Media",
+                          t("formHeardFromReferral") || "Referral",
+                          t("formHeardFromOther") || "Other",
+                        ].map((option) => (
+                          <label
+                            key={option}
+                            className="flex items-center gap-2 cursor-pointer group"
+                          >
+                            <input
+                              type="radio"
+                              name="heardFrom"
+                              value={option}
+                              checked={formData.heardFrom === option}
+                              onChange={(e) => {
+                                setFormData({ ...formData, heardFrom: e.target.value });
+                                // Clear error when user selects
+                                if (formErrors.heardFrom) {
+                                  setFormErrors({ ...formErrors, heardFrom: "" });
+                                }
+                              }}
+                              required
+                              className="w-4 h-4 rounded border-white/20 bg-white/5 text-violet-500 focus:ring-2 focus:ring-violet-500/50 cursor-pointer"
+                            />
+                            <span className="text-[13px] text-white/70 group-hover:text-white/90 transition-colors">
+                              {option}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                      {formErrors.heardFrom && (
+                        <p className="text-[11px] text-red-400 mt-1">{formErrors.heardFrom}</p>
+                      )}
+                    </div>
+
+                    {/* Submit Button */}
+                    <button
+                      type="submit"
+                      className="w-full group inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98] transition-transform"
+                    >
+                      {t("scheduleCall") || "Schedule Call"}
+                      <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </button>
+                  </form>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -659,6 +1032,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
               onChange={(e) => setInput(e.target.value)}
               placeholder={isStreaming ? "..." : t("inputPlaceholder")}
               disabled={isStreaming}
+              maxLength={MAX_MESSAGE_LENGTH}
               className="h-10 w-full bg-transparent text-[14px] tracking-tight text-white placeholder:text-white/25 focus:outline-none disabled:opacity-50"
             />
             <button

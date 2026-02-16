@@ -32,16 +32,102 @@ export async function POST(req: NextRequest): Promise<Response> {
     const body = await req.json();
     
     // Validate and sanitize input
-    const { locale, messages, finalAssistantMessage, userEmail } = body as {
+    const { locale, messages, finalAssistantMessage, userEmail, formData } = body as {
       locale?: string;
       messages?: Array<{ role: string; content: string; createdAt?: number }>;
       finalAssistantMessage?: string;
       userEmail?: string;
+      formData?: {
+        fullName?: string;
+        email?: string;
+        phone?: string;
+        heardFrom?: string;
+      };
     };
 
-    // Sanitize user email (basic validation)
-    const sanitizedEmail = userEmail && typeof userEmail === "string" && userEmail.includes("@") 
-      ? userEmail.trim().toLowerCase() 
+    // Validation functions
+    const validateEmail = (email: string): boolean => {
+      if (!email || typeof email !== "string") return false;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email) && email.length <= 254 && email.length >= 3;
+    };
+
+    const validatePhone = (phone: string): boolean => {
+      if (!phone || typeof phone !== "string") return false;
+      // Remove all non-digit characters except + for international format
+      const cleaned = phone.replace(/[^\d+]/g, "");
+      // Valid phone: 7-15 digits (international format), can start with +
+      const phoneRegex = /^\+?[1-9]\d{6,14}$/;
+      return phoneRegex.test(cleaned) && cleaned.length >= 7 && cleaned.length <= 15;
+    };
+
+    const validateFullName = (name: string): boolean => {
+      if (!name || typeof name !== "string") return false;
+      // Name should be 2-100 characters, contain only letters, spaces, hyphens, apostrophes
+      const nameRegex = /^[a-zA-ZÀ-ÿ\s'-]{2,100}$/;
+      return nameRegex.test(name.trim());
+    };
+
+    const sanitizeInput = (input: string, maxLength: number = 500): string => {
+      if (!input || typeof input !== "string") return "";
+      // Remove potential XSS vectors and trim
+      return input
+        .replace(/<script[^>]*>.*?<\/script>/gi, "")
+        .replace(/<[^>]+>/g, "")
+        .replace(/javascript:/gi, "")
+        .replace(/on\w+\s*=/gi, "")
+        .trim()
+        .slice(0, maxLength);
+    };
+
+    // Sanitize and validate form data
+    let sanitizedFormData: {
+      fullName?: string;
+      email?: string;
+      phone?: string;
+      heardFrom?: string;
+    } | undefined = undefined;
+
+    if (formData) {
+      const fullName = sanitizeInput(formData.fullName || "", 100);
+      const email = sanitizeInput((formData.email || "").toLowerCase(), 254);
+      const phone = sanitizeInput(formData.phone || "", 20);
+      const heardFrom = sanitizeInput(formData.heardFrom || "", 100);
+
+      // Validate all fields
+      if (fullName && !validateFullName(fullName)) {
+        return new Response(
+          JSON.stringify({ ok: false, error: "Invalid full name format" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (email && !validateEmail(email)) {
+        return new Response(
+          JSON.stringify({ ok: false, error: "Invalid email format" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      if (phone && !validatePhone(phone)) {
+        return new Response(
+          JSON.stringify({ ok: false, error: "Invalid phone format" }),
+          { status: 400, headers: { "Content-Type": "application/json" } }
+        );
+      }
+
+      sanitizedFormData = {
+        fullName: fullName || undefined,
+        email: email || undefined,
+        phone: phone || undefined,
+        heardFrom: heardFrom || undefined,
+      };
+    }
+
+    // Sanitize user email (fallback to formData email)
+    const emailToUse = userEmail || sanitizedFormData?.email;
+    const sanitizedEmail = emailToUse && validateEmail(emailToUse)
+      ? sanitizeInput(emailToUse.toLowerCase(), 254)
       : undefined;
 
     const safeLocale = locale || "en";
@@ -99,9 +185,17 @@ export async function POST(req: NextRequest): Promise<Response> {
     const teamEmailText = [
       "NOVA — Product Discovery Session Report",
       "",
+      "=".repeat(60),
+      "CLIENT INFORMATION",
+      "=".repeat(60),
+      "",
+      sanitizedFormData?.fullName ? `Full Name: ${sanitizedFormData.fullName}` : "Full Name: Not provided",
+      sanitizedEmail ? `Email: ${sanitizedEmail}` : "Email: Not provided",
+      sanitizedFormData?.phone ? `Phone: ${sanitizedFormData.phone}` : "Phone: Not provided",
+      sanitizedFormData?.heardFrom ? `Heard From: ${sanitizedFormData.heardFrom}` : "Heard From: Not provided",
+      "",
       `Locale: ${safeLocale}`,
       `Generated at: ${now.toISOString()}`,
-      sanitizedEmail ? `Client Email: ${sanitizedEmail}` : "Client Email: Not provided",
       "",
       "=".repeat(60),
       "TECHNICAL PROPOSAL DOCUMENT",
