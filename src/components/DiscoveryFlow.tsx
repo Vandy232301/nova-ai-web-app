@@ -27,11 +27,9 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   const [isStreaming, setIsStreaming] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [quickReplies, setQuickReplies] = useState<QuickReply[]>([]);
-  const [userEmail, setUserEmail] = useState("");
   const [isScheduled, setIsScheduled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const emailInputRef = useRef<HTMLInputElement>(null);
   const hasInitialized = useRef(false);
   const hasSentReport = useRef(false);
 
@@ -297,22 +295,91 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     [locale, scrollToBottom, detectQuickReplies]
   );
 
-  // Check if user returned from calendar booking
+  // Send discovery report email to NOVA team
+  const sendDiscoveryReport = useCallback(async () => {
+    if (hasSentReport.current) return;
+    hasSentReport.current = true;
+    
+    try {
+      // Get the final assistant message (summary) - find last assistant message
+      const assistantMessages = messages.filter((m) => m.role === "assistant");
+      const finalMessage = assistantMessages.length > 0 
+        ? assistantMessages[assistantMessages.length - 1].content 
+        : "";
+      
+      await fetch("/api/discovery/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          locale,
+          messages: messages,
+          finalAssistantMessage: finalMessage,
+          userEmail: undefined,
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to send discovery report:", err);
+    }
+  }, [locale, messages]);
+
+  // Check if user returned from calendar booking and send report
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window === "undefined") return;
+
+    const checkScheduled = () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("scheduled") === "true") {
         setIsScheduled(true);
+        sendDiscoveryReport();
         // Clean URL
         window.history.replaceState({}, "", window.location.pathname);
+        return true;
       }
-      // Also check sessionStorage
-      if (sessionStorage.getItem("nova_scheduled") === "true") {
+      // Also check sessionStorage (both "pending" and "true" indicate user went to calendar)
+      const scheduledStatus = sessionStorage.getItem("nova_scheduled");
+      if (scheduledStatus === "true" || scheduledStatus === "pending") {
         setIsScheduled(true);
+        sendDiscoveryReport();
         sessionStorage.removeItem("nova_scheduled");
+        return true;
       }
-    }
-  }, []);
+      return false;
+    };
+
+    // Check immediately
+    checkScheduled();
+
+    // Listen for window focus (user returns to tab after booking)
+    const handleFocus = () => {
+      // Small delay to allow Google Calendar redirect to set sessionStorage
+      setTimeout(() => {
+        const scheduledStatus = sessionStorage.getItem("nova_scheduled");
+        if ((scheduledStatus === "true" || scheduledStatus === "pending") && !isScheduled) {
+          setIsScheduled(true);
+          sendDiscoveryReport();
+          sessionStorage.removeItem("nova_scheduled");
+        }
+      }, 1000);
+    };
+
+    // Also poll periodically to catch when user returns (in case focus event doesn't fire)
+    let pollInterval: NodeJS.Timeout | null = null;
+    pollInterval = setInterval(() => {
+      const scheduledStatus = sessionStorage.getItem("nova_scheduled");
+      if ((scheduledStatus === "true" || scheduledStatus === "pending") && !isScheduled) {
+        setIsScheduled(true);
+        sendDiscoveryReport();
+        sessionStorage.removeItem("nova_scheduled");
+        if (pollInterval) clearInterval(pollInterval);
+      }
+    }, 2000);
+
+    window.addEventListener("focus", handleFocus);
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      if (pollInterval) clearInterval(pollInterval);
+    };
+  }, [isScheduled, sendDiscoveryReport]);
 
   // Initial greeting - start immediately without delay
   useEffect(() => {
@@ -397,8 +464,27 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           className="flex-1 overflow-y-auto space-y-4 pb-4 nova-scroll-fade"
           style={{ maxHeight: "calc(100dvh - 180px)" }}
         >
+          {/* Thank you message after scheduling - hide conversation */}
+          <AnimatePresence>
+            {isScheduled && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col items-center justify-center min-h-[60vh] pt-12 px-4"
+              >
+                <div className="liquid-glass-card rounded-2xl px-6 py-8 space-y-4 max-w-md text-center">
+                  <h3 className="text-xl font-semibold text-white">{t("thankYouTitle")}</h3>
+                  <p className="text-[15px] leading-relaxed text-white/70">{t("thankYouMessage")}</p>
+                  <p className="text-[16px] font-medium text-violet-400 mt-4">{t("seeYouAtCall")}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Initial loading state - show while waiting for first NOVA message */}
-          {messages.length === 0 && isStreaming && (
+          {messages.length === 0 && isStreaming && !isScheduled && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -455,7 +541,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           )}
 
           <AnimatePresence initial={false}>
-            {messages.map((msg) => (
+            {!isScheduled && messages.map((msg) => (
               <motion.div
                 key={msg.id}
                 initial={{ opacity: 0, y: 12 }}
@@ -483,7 +569,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
 
           {/* Typing indicator */}
           <AnimatePresence>
-            {isStreaming && messages.length > 0 && messages[messages.length - 1]?.role !== "assistant" && (
+            {!isScheduled && isStreaming && messages.length > 0 && messages[messages.length - 1]?.role !== "assistant" && (
               <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex justify-start">
                 <div className="liquid-glass-card rounded-2xl rounded-bl-md px-4 py-3 sm:px-5 sm:py-3.5">
                   <span className="text-[11px] uppercase tracking-[0.12em] text-violet-400/70 font-medium block mb-1.5">NOVA</span>
@@ -499,7 +585,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
 
           {/* Quick reply buttons */}
           <AnimatePresence>
-            {quickReplies.length > 0 && !isStreaming && (
+            {!isScheduled && quickReplies.length > 0 && !isStreaming && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -523,25 +609,6 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
             )}
           </AnimatePresence>
 
-          {/* Thank you message after scheduling */}
-          <AnimatePresence>
-            {isScheduled && (
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="pt-4 text-center space-y-4"
-              >
-                <div className="liquid-glass-card rounded-2xl px-6 py-5 space-y-3">
-                  <h3 className="text-lg font-semibold text-white">{t("thankYouTitle")}</h3>
-                  <p className="text-[14px] leading-relaxed text-white/70">{t("thankYouMessage")}</p>
-                  <p className="text-[15px] font-medium text-violet-400">{t("seeYouAtCall")}</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Schedule call CTA */}
           <AnimatePresence>
             {showSummary && !isScheduled && (
@@ -551,58 +618,14 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 transition={{ delay: 0.5, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="pt-4 text-center space-y-4"
               >
-                {/* Email input (optional) */}
-                <div className="space-y-2">
-                  <label htmlFor="user-email" className="block text-[12px] text-white/40 text-left px-1">
-                    {t("emailLabel")}
-                  </label>
-                  <input
-                    ref={emailInputRef}
-                    id="user-email"
-                    type="email"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    placeholder={t("emailPlaceholder")}
-                    className="w-full liquid-glass-input rounded-xl px-4 py-2.5 text-[14px] text-white placeholder:text-white/25 focus:outline-none focus:ring-2 focus:ring-violet-500/50"
-                  />
-                  <p className="text-[11px] text-white/30 px-1">{t("emailDescription")}</p>
-                </div>
-
                 <a
                   href={calendarLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => {
-                    // Mark as scheduled when user clicks (they'll complete booking externally)
+                    // Mark that user is going to schedule (will be confirmed when they return)
                     if (typeof window !== "undefined") {
-                      sessionStorage.setItem("nova_scheduled", "true");
-                    }
-                    
-                    // Send discovery report email to NOVA team when user schedules call
-                    if (!hasSentReport.current) {
-                      hasSentReport.current = true;
-                      (async () => {
-                        try {
-                          // Get the final assistant message (summary) - find last assistant message
-                          const assistantMessages = messages.filter((m) => m.role === "assistant");
-                          const finalMessage = assistantMessages.length > 0 
-                            ? assistantMessages[assistantMessages.length - 1].content 
-                            : "";
-                          
-                          await fetch("/api/discovery/report", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                              locale,
-                              messages: messages,
-                              finalAssistantMessage: finalMessage,
-                              userEmail: userEmail || undefined,
-                            }),
-                          });
-                        } catch (err) {
-                          console.error("Failed to send discovery report:", err);
-                        }
-                      })();
+                      sessionStorage.setItem("nova_scheduled", "pending");
                     }
                   }}
                   className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-500 to-blue-500 liquid-glass-cta px-8 py-3.5 text-[14px] font-medium text-white hover:scale-[1.02] active:scale-[0.98]"
@@ -616,14 +639,16 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
           </AnimatePresence>
         </div>
 
-        {/* Input bar */}
-        <motion.form
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          onSubmit={handleSubmit}
-          className="flex-shrink-0 mt-2"
-        >
+        {/* Input bar - hide when scheduled */}
+        {!isScheduled && (
+          <motion.form
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            transition={{ duration: 0.3 }}
+            onSubmit={handleSubmit}
+            className="flex-shrink-0 mt-2"
+          >
           <div className="liquid-glass-input flex items-center gap-3 rounded-2xl px-4 sm:px-5 py-3">
             <input
               ref={inputRef}
@@ -645,6 +670,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
             </button>
           </div>
         </motion.form>
+        )}
       </div>
     </div>
   );

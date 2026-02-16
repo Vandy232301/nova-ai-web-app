@@ -124,7 +124,10 @@ body {
     radial-gradient(circle at 15% 60%, rgba(108, 92, 231, 0.4) 0%, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 1) 45%),
     radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.45) 0%, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 1) 45%),
     radial-gradient(circle at 40% 15%, rgba(108, 92, 231, 0.35) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%),
-    radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.3) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%);
+    radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.3) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%),
+    radial-gradient(circle at 70% 35%, rgba(96, 165, 250, 0.4) 0%, rgba(59, 130, 246, 0.2) 20%, rgba(0, 0, 0, 1) 45%),
+    radial-gradient(circle at 5% 45%, rgba(37, 99, 235, 0.35) 0%, rgba(0, 0, 0, 1) 25%, rgba(0, 0, 0, 1) 45%),
+    radial-gradient(circle at 95% 70%, rgba(59, 130, 246, 0.38) 0%, rgba(37, 99, 235, 0.15) 18%, rgba(0, 0, 0, 1) 42%);
   /* Responsive blur - smaller on mobile for better performance */
   filter: blur(120px);
   animation: nova-gradient-rotate 30s linear infinite, nova-gradient-pulse 15s ease-in-out infinite;
@@ -139,7 +142,10 @@ body {
     radial-gradient(circle at 25% 75%, rgba(59, 130, 246, 0.5) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 45%),
     radial-gradient(circle at 90% 60%, rgba(108, 92, 231, 0.4) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 45%),
     radial-gradient(circle at 10% 25%, rgba(59, 130, 246, 0.45) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 45%),
-    radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.35) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 40%);
+    radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.35) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 40%),
+    radial-gradient(circle at 55% 20%, rgba(96, 165, 250, 0.35) 0%, rgba(59, 130, 246, 0.15) 18%, rgba(0, 0, 0, 1) 40%),
+    radial-gradient(circle at 75% 55%, rgba(37, 99, 235, 0.32) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 42%),
+    radial-gradient(circle at 20% 85%, rgba(59, 130, 246, 0.38) 0%, rgba(37, 99, 235, 0.12) 15%, rgba(0, 0, 0, 1) 38%);
   filter: blur(100px);
   animation: nova-gradient-rotate-reverse 35s linear infinite, nova-gradient-pulse-delayed 18s ease-in-out infinite;
   opacity: 1 !important;
@@ -474,6 +480,9 @@ body {
       radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.25) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%),
       radial-gradient(circle at 40% 15%, rgba(108, 92, 231, 0.2) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 35%),
       radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.18) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 35%),
+      radial-gradient(circle at 70% 35%, rgba(96, 165, 250, 0.22) 0%, rgba(59, 130, 246, 0.1) 18%, rgba(0, 0, 0, 1) 42%),
+      radial-gradient(circle at 5% 45%, rgba(37, 99, 235, 0.2) 0%, rgba(0, 0, 0, 1) 22%, rgba(0, 0, 0, 1) 42%),
+      radial-gradient(circle at 95% 70%, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.08) 15%, rgba(0, 0, 0, 1) 38%),
       #000000;
     /* Ensure black base covers everything */
     background-color: #000000 !important;
@@ -494,6 +503,9 @@ body {
       radial-gradient(circle at 90% 60%, rgba(108, 92, 231, 0.22) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 40%),
       radial-gradient(circle at 10% 25%, rgba(59, 130, 246, 0.25) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 40%),
       radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.2) 0%, rgba(0, 0, 0, 1) 12%, rgba(0, 0, 0, 1) 35%),
+      radial-gradient(circle at 55% 20%, rgba(96, 165, 250, 0.2) 0%, rgba(59, 130, 246, 0.08) 15%, rgba(0, 0, 0, 1) 36%),
+      radial-gradient(circle at 75% 55%, rgba(37, 99, 235, 0.18) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 38%),
+      radial-gradient(circle at 20% 85%, rgba(59, 130, 246, 0.2) 0%, rgba(37, 99, 235, 0.06) 12%, rgba(0, 0, 0, 1) 34%),
       #000000;
     /* Ensure black base covers everything */
     background-color: #000000 !important;
@@ -525,6 +537,9 @@ body {
       radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.2) 0%, rgba(0, 0, 0, 1) 18%, rgba(0, 0, 0, 1) 38%),
       radial-gradient(circle at 40% 15%, rgba(108, 92, 231, 0.15) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 32%),
       radial-gradient(circle at 30% 90%, rgba(108, 92, 231, 0.12) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 32%),
+      radial-gradient(circle at 70% 35%, rgba(96, 165, 250, 0.18) 0%, rgba(59, 130, 246, 0.06) 14%, rgba(0, 0, 0, 1) 38%),
+      radial-gradient(circle at 5% 45%, rgba(37, 99, 235, 0.16) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 38%),
+      radial-gradient(circle at 95% 70%, rgba(59, 130, 246, 0.16) 0%, rgba(37, 99, 235, 0.05) 12%, rgba(0, 0, 0, 1) 34%),
       #000000;
     background-color: #000000 !important;
   }
@@ -540,6 +555,9 @@ body {
       radial-gradient(circle at 90% 60%, rgba(108, 92, 231, 0.18) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 38%),
       radial-gradient(circle at 10% 25%, rgba(59, 130, 246, 0.2) 0%, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 38%),
       radial-gradient(circle at 45% 85%, rgba(108, 92, 231, 0.15) 0%, rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 32%),
+      radial-gradient(circle at 55% 20%, rgba(96, 165, 250, 0.16) 0%, rgba(59, 130, 246, 0.05) 12%, rgba(0, 0, 0, 1) 32%),
+      radial-gradient(circle at 75% 55%, rgba(37, 99, 235, 0.14) 0%, rgba(0, 0, 0, 1) 16%, rgba(0, 0, 0, 1) 34%),
+      radial-gradient(circle at 20% 85%, rgba(59, 130, 246, 0.16) 0%, rgba(37, 99, 235, 0.04) 10%, rgba(0, 0, 0, 1) 30%),
       #000000;
     background-color: #000000 !important;
   }
