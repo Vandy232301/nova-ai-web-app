@@ -210,6 +210,10 @@ body {
 .nova-scroll-fade {
   mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
   -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+  /* Allow horizontal overflow for hover effects */
+  overflow-x: visible;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .nova-text-secondary {

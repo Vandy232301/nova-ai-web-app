@@ -149,37 +149,50 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   }), [t]);
 
   // Detect which quick replies to show based on Claude's response
+  // Buttons must match the actual question topic (no audience buttons when NOVA asks about design, game elements, etc.)
   const detectQuickReplies = useCallback((text: string): QuickReply[] => {
     const lower = text.toLowerCase();
+
+    // Exclude quick replies when NOVA is asking about design, visuals, game mechanics, or integrations
+    const isAboutDesign =
+      lower.includes("design") || lower.includes("visual") || lower.includes("theme") || lower.includes("look and feel") ||
+      lower.includes("minimal") || lower.includes("colorful") || lower.includes("inspiration") || lower.includes("wireframe");
+    const isAboutGameMechanics =
+      lower.includes("game element") || lower.includes("level up") || lower.includes("achievement") || lower.includes("badge") ||
+      lower.includes("challenge") || lower.includes("reward") || lower.includes("gamif");
+    const isAboutIntegration =
+      lower.includes("integration") || lower.includes("external service") || lower.includes("api") || lower.includes("third-party");
+    if (isAboutDesign || isAboutGameMechanics || isAboutIntegration) {
+      return [];
+    }
 
     // Project type detection
     if (
       (lower.includes("web app") || lower.includes("mobile app") || lower.includes("saas") || lower.includes("e-commerce") || lower.includes("dashboard")) &&
-      (lower.includes("what type") || lower.includes("quel type") || lower.includes("ce tip") || lower.includes("welche art") || lower.includes("qué tipo") || lower.includes("che tipo") || lower.includes("какой тип") || lower.includes("什么类型") || lower.includes("どのタイプ") || lower.includes("looking to build") || lower.includes("thinking about") || lower.includes("thinking of"))
+      (lower.includes("what type") || lower.includes("quel type") || lower.includes("ce tip") || lower.includes("welche art") || lower.includes("qué tipo") || lower.includes("che tipo") || lower.includes("looking to build") || lower.includes("thinking about") || lower.includes("thinking of"))
     ) {
       return optionSets.projectType;
     }
 
-    // Industry detection
+    // Industry detection – only when clearly asking about industry/sector
     if (
-      lower.includes("industry") || lower.includes("domain") || lower.includes("sector") ||
+      lower.includes("industry") || lower.includes("sector") || lower.includes("vertical") ||
       lower.includes("industrie") || lower.includes("domeniu") || lower.includes("domaine") ||
-      lower.includes("branche") || lower.includes("settore") || lower.includes("отрасл") ||
-      lower.includes("行业") || lower.includes("業界")
+      lower.includes("branche") || lower.includes("settore") || lower.includes("行业") || lower.includes("業界")
     ) {
       return optionSets.industry;
     }
 
-    // Audience detection
-    if (
-      (lower.includes("who") && (lower.includes("user") || lower.includes("using") || lower.includes("audience") || lower.includes("target"))) ||
-      lower.includes("b2b") || lower.includes("b2c") ||
-      lower.includes("cine") || lower.includes("utilizator") ||
-      lower.includes("qui") || lower.includes("utilisera") ||
-      lower.includes("wer") || lower.includes("nutzen") ||
-      lower.includes("quién") || lower.includes("chi") ||
-      lower.includes("кто") || lower.includes("谁") || lower.includes("誰")
-    ) {
+    // Audience detection – only when NOVA clearly asks WHO the product is for (target audience), not when "user" appears in other contexts
+    const asksTargetAudience =
+      lower.includes("target audience") || lower.includes("who will use") || lower.includes("who will be using") ||
+      lower.includes("who is this for") || lower.includes("who are your users") || lower.includes("who are the users") ||
+      lower.includes("businesses or consumers") || lower.includes("b2b or b2c") || lower.includes("b2b and b2c") ||
+      (lower.includes("who") && (lower.includes("audience") || lower.includes("target market") || lower.includes("end user")));
+    const hasExplicitB2B2C =
+      (lower.includes("b2b") || lower.includes("b2c")) &&
+      (lower.includes("?") || lower.includes("choose") || lower.includes("select") || lower.includes("prefer"));
+    if (asksTargetAudience || hasExplicitB2B2C) {
       return optionSets.audience;
     }
 
@@ -616,7 +629,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         <div
           ref={scrollRef}
           className="flex-1 overflow-y-auto space-y-4 pb-4 nova-scroll-fade"
-          style={{ maxHeight: "calc(100dvh - 180px)" }}
+          style={{ maxHeight: "calc(100dvh - 180px)", overflowX: "visible" }}
         >
           {/* Thank you message after scheduling - hide conversation */}
           <AnimatePresence>
@@ -628,6 +641,25 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col items-center justify-center min-h-[60vh] pt-12 px-4"
               >
+                {/* NOVA portrait image */}
+                <motion.div
+                  initial={{ scale: 0.95, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+                  className="relative w-full max-w-[180px] sm:max-w-[220px] aspect-square rounded-2xl overflow-hidden mb-6"
+                >
+                  <Image
+                    src="/nova-loading.png"
+                    alt="NOVA"
+                    fill
+                    className="object-cover"
+                    priority
+                    quality={90}
+                  />
+                  {/* Subtle overlay gradient for text readability */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/60 via-transparent to-transparent" />
+                </motion.div>
+
                 <div className="liquid-glass-card rounded-2xl px-6 py-8 space-y-4 max-w-md text-center">
                   <h3 className="text-xl font-semibold text-white">{t("thankYouTitle") || "Thank You!"}</h3>
                   <p className="text-[15px] leading-relaxed text-white/70">
@@ -749,7 +781,8 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-wrap gap-2 pt-1"
+                className="flex flex-wrap gap-2 pt-1 pl-1 pr-1"
+                style={{ overflow: "visible", marginLeft: "-4px", marginRight: "-4px", paddingLeft: "8px", paddingRight: "8px" }}
               >
                 {quickReplies.map((qr, i) => (
                   <motion.button
@@ -759,6 +792,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
                     transition={{ delay: i * 0.04, duration: 0.25 }}
                     onClick={() => handleQuickReply(qr.label)}
                     className="liquid-glass rounded-full px-4 py-2 text-[13px] text-white/60 hover:text-white/90 transition-all hover:scale-[1.03] active:scale-[0.97]"
+                    style={{ transformOrigin: "center" }}
                   >
                     {qr.label}
                   </motion.button>
