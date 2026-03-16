@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: "NOVA — Build software. Talk to AI.",
   description:
     "AI-powered software development: Senior engineers + artificial intelligence deliver predictable costs, clear timelines, and zero wasted weeks. From idea to production in record time.",
-  metadataBase: new URL("https://nova-ai-web-app.vercel.app"),
+  metadataBase: new URL("https://nova.vandy.ro"),
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },

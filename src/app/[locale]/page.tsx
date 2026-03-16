@@ -30,8 +30,14 @@ export default function Home() {
           <Link href="/about" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
             {tNav("about")}
           </Link>
+          <Link href="/pricing" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
+            {tNav("pricing")}
+          </Link>
           <Link href="/contact" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
             {tNav("contact")}
+          </Link>
+          <Link href="/auth/login" className="liquid-glass-card-accent rounded-full px-3 py-1 text-[12px] text-white/90 hover:text-white">
+            {tNav("login")}
           </Link>
           <LanguageSwitcher />
         </nav>
@@ -79,10 +85,10 @@ export default function Home() {
                   <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                 </button>
                 <Link
-                  href="/contact"
+                  href="/pricing?tab=done-for-you"
                   className="pointer-events-auto liquid-glass flex items-center gap-1.5 rounded-full px-5 py-2.5 text-[14px] text-white/70 hover:text-white/90"
                 >
-                  {t("contactUs")}
+                  {t("hireTeam") || "Hire our team"}
                   <span className="text-[12px]">&rarr;</span>
                 </Link>
               </motion.div>

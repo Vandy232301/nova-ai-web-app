@@ -241,7 +241,9 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
     return [];
   }, [optionSets]);
 
-  // Send message to Claude API
+  const novaApiUrl = process.env.NEXT_PUBLIC_NOVA_API_URL;
+
+  // Send message to Nova via OpenClaw proxy (SSE streaming)
   const sendToAPI = useCallback(
     async (allMessages: ChatMessage[]) => {
       setIsStreaming(true);
@@ -251,25 +253,38 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
       const assistantId = `assistant-${Date.now()}`;
       let fullContent = "";
 
+      const pushAssistant = (content: string) => {
+        setMessages((prev) => {
+          const others = prev.filter((m) => m.id !== assistantId);
+          return [
+            ...others,
+            { id: assistantId, role: "assistant", content, createdAt: Date.now() },
+          ];
+        });
+        scrollToBottom();
+      };
+
       try {
-        const response = await fetch("/api/chat", {
+        const apiEndpoint = novaApiUrl
+          ? `${novaApiUrl}/v1/chat/public`
+          : "/api/chat";
+
+        const chatMessages = allMessages
+          .filter((m) => m.role === "user" || m.role === "assistant")
+          .map((m) => ({ role: m.role, content: m.content }));
+
+        const response = await fetch(apiEndpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            messages: allMessages.map((m) => ({
-              id: m.id,
-              role: m.role,
-              content: m.content,
-              createdAt: m.createdAt,
-            })),
+            messages: chatMessages,
             locale,
           }),
         });
 
-        // Handle rate limiting errors
         if (response.status === 429) {
-          const retryAfter = response.headers.get("Retry-After");
-          const waitTime = retryAfter ? parseInt(retryAfter, 10) : 60;
+          const errBody = await response.json().catch(() => ({}));
+          const waitTime = errBody.retryAfter || 60;
           setIsStreaming(false);
           setMessages((prev) => [
             ...prev,
@@ -305,67 +320,73 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         const decoder = new TextDecoder();
         let buffer = "";
 
-        const pushAssistant = (content: string) => {
-          setMessages((prev) => {
-            const others = prev.filter((m) => m.id !== assistantId);
-            return [
-              ...others,
-              { id: assistantId, role: "assistant", content, createdAt: Date.now() },
-            ];
-          });
-          scrollToBottom();
-        };
+        const isSSE = response.headers.get("content-type")?.includes("text/event-stream");
 
         while (true) {
           const { value, done } = await reader.read();
-          if (done) {
-            if (buffer.trim()) {
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+
+            if (isSSE) {
+              if (trimmed === "data: [DONE]") continue;
+              if (!trimmed.startsWith("data: ")) continue;
               try {
-                const parsed = JSON.parse(buffer.trim());
+                const json = JSON.parse(trimmed.slice(6));
+                const delta = json.choices?.[0]?.delta?.content;
+                if (delta) {
+                  fullContent += delta;
+                  pushAssistant(fullContent);
+                }
+              } catch { /* ignore parse errors */ }
+            } else {
+              try {
+                const parsed = JSON.parse(trimmed);
                 if (parsed.type === "text") {
                   fullContent += parsed.content;
                   pushAssistant(fullContent);
                 } else if (parsed.type === "done") {
                   fullContent = parsed.finalMessage.content;
                   pushAssistant(fullContent);
+                } else if (parsed.type === "error") {
+                  pushAssistant("Something went wrong. Please try again.");
                 }
               } catch { /* ignore */ }
             }
-            break;
-          }
-
-          const chunk = decoder.decode(value, { stream: true });
-          buffer += chunk;
-          const lines = buffer.split("\n");
-          buffer = lines.pop() || "";
-
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const parsed = JSON.parse(line);
-              if (parsed.type === "text") {
-                fullContent += parsed.content;
-                pushAssistant(fullContent);
-              } else if (parsed.type === "done") {
-                fullContent = parsed.finalMessage.content;
-                pushAssistant(fullContent);
-              } else if (parsed.type === "error") {
-                pushAssistant("Something went wrong. Please try again.");
-              }
-            } catch { /* ignore */ }
           }
         }
 
-        // Check for summary
+        if (buffer.trim() && isSSE) {
+          const trimmed = buffer.trim();
+          if (trimmed.startsWith("data: ") && trimmed !== "data: [DONE]") {
+            try {
+              const json = JSON.parse(trimmed.slice(6));
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) {
+                fullContent += delta;
+                pushAssistant(fullContent);
+              }
+            } catch {}
+          }
+        }
+
+        const lower = fullContent.toLowerCase();
         if (
           fullContent.includes("📋") ||
-          fullContent.toLowerCase().includes("project summary") ||
-          fullContent.toLowerCase().includes("next step")
+          lower.includes("project summary") ||
+          lower.includes("here's your summary") ||
+          lower.includes("ready to schedule") ||
+          (lower.includes("next step") && lower.includes("schedule"))
         ) {
           setShowSummary(true);
         }
 
-        // Detect and show quick replies
         const detected = detectQuickReplies(fullContent);
         if (detected.length > 0) {
           setQuickReplies(detected);
@@ -388,7 +409,7 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
         setTimeout(() => inputRef.current?.focus(), 100);
       }
     },
-    [locale, scrollToBottom, detectQuickReplies]
+    [locale, scrollToBottom, detectQuickReplies, novaApiUrl]
   );
 
   // Send discovery report email to NOVA team
@@ -495,12 +516,21 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (messages.length === 0 && !hasInitialized.current) {
       hasInitialized.current = true;
-      // Use requestIdleCallback for non-blocking initialization
       const initializeChat = () => {
         const initMessage: ChatMessage = {
           id: `user-init-${Date.now()}`,
           role: "user",
-          content: `[System: The user just clicked "Start building" on the NOVA website. Begin the product discovery conversation. Greet them warmly and ask your first question. Respond in the language: ${locale}]`,
+          content: locale === "en"
+            ? "Hi, I want to build something!"
+            : locale === "ro"
+              ? "Salut, vreau să construiesc ceva!"
+              : locale === "fr"
+                ? "Bonjour, je veux créer quelque chose !"
+                : locale === "de"
+                  ? "Hallo, ich möchte etwas bauen!"
+                  : locale === "es"
+                    ? "¡Hola, quiero construir algo!"
+                    : "Hi, I want to build something!",
           createdAt: Date.now(),
         };
         sendToAPI([initMessage]);
@@ -608,8 +638,8 @@ export default function DiscoveryFlow({ onClose }: { onClose: () => void }) {
   };
 
   // Progress estimation
-  const messageCount = messages.filter((m) => m.role === "user").length;
-  const estimatedProgress = Math.min((messageCount / 13) * 100, showSummary ? 100 : 95);
+  const userMessageCount = messages.filter((m) => m.role === "user").length;
+  const estimatedProgress = Math.min((userMessageCount / 13) * 100, showSummary ? 100 : 95);
 
   return (
     <div className="relative z-10 flex w-full flex-1 flex-col items-center px-3 sm:px-8 pt-20 sm:pt-24 pb-4">

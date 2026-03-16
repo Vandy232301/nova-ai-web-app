@@ -92,7 +92,7 @@ export function getClientIdentifier(req: NextRequest): string {
     forwarded?.split(",")[0]?.trim() ||
     realIp ||
     cfConnectingIp ||
-    req.ip ||
+    (req as unknown as { ip?: string }).ip ||
     "unknown";
 
   // Also use a session identifier if available

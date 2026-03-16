@@ -131,11 +131,10 @@ export async function POST(req: NextRequest): Promise<Response> {
       .filter((m) => m.role === "user")
       .pop()?.content || "";
 
-    // Check for suspicious patterns (rapid requests, repetitive content, etc.)
     const suspiciousPatterns = [
-      /(.)\1{20,}/, // Repeated characters (e.g., "aaaaaaaaaaaaaaaaaaaa")
-      /.{500,}/, // Very long single word
-      /(.){1,3}\s*(.){1,3}\s*(.){1,3}\s*/, // Repetitive short patterns
+      /(.)\1{20,}/,        // 20+ repeated characters (e.g., "aaaaaaaaaaaaaaaaaaaa")
+      /\S{500,}/,          // Single word over 500 chars (no spaces)
+      /^(.{1,5})\1{10,}$/, // Short pattern repeated 10+ times (e.g., "abcabcabcabc...")
     ];
 
     if (suspiciousPatterns.some((pattern) => pattern.test(lastUserMessage))) {
