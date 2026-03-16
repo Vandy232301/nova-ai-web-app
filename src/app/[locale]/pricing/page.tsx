@@ -128,7 +128,7 @@ export default function PricingPage() {
       </header>
 
       {/* Content */}
-      <section className="relative z-10 w-full max-w-6xl px-4 sm:px-8 pt-28 sm:pt-36 pb-20">
+      <section className="relative z-10 w-full max-w-6xl px-4 sm:px-8 pt-28 sm:pt-36 pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

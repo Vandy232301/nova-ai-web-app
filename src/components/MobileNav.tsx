@@ -55,7 +55,7 @@ export default function MobileNav({ activePage }: { activePage?: "about" | "cont
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: "100%" }}
               transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-              className="fixed top-0 right-0 bottom-0 z-50 w-[280px] px-6 py-8 flex flex-col"
+              className="fixed top-0 right-0 bottom-0 z-50 w-[280px] px-6 pt-[calc(2rem+env(safe-area-inset-top))] pb-8 flex flex-col"
               style={{
                 background: "linear-gradient(180deg, rgba(10,10,18,0.98) 0%, rgba(5,5,8,0.99) 100%)",
                 backdropFilter: "blur(24px)",

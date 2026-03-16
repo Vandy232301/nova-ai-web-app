@@ -154,22 +154,22 @@ export default function DashboardPage() {
           <span className="tracking-tight font-bold text-[17px] sm:text-[18px]">NOVA</span>
         </Link>
         <nav className="flex items-center gap-1.5">
-          <Link href="/build" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
+          <Link href="/build" className="liquid-glass rounded-full px-3 py-2 text-[12px] text-white/70 hover:text-white/90 min-h-[44px] flex items-center">
             {tNav("build")}
           </Link>
-          <Link href="/pricing" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
+          <Link href="/pricing" className="liquid-glass rounded-full px-3 py-2 text-[12px] text-white/70 hover:text-white/90 min-h-[44px] flex items-center">
             {tNav("pricing")}
           </Link>
           <button
             onClick={handleSignOut}
-            className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/50 hover:text-white/70"
+            className="liquid-glass rounded-full px-3 py-2 text-[12px] text-white/50 hover:text-white/70 min-h-[44px] flex items-center"
           >
             {t("signOut")}
           </button>
         </nav>
       </header>
 
-      <section className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-8 pt-28 sm:pt-36 pb-20">
+      <section className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-8 pt-28 sm:pt-36 pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

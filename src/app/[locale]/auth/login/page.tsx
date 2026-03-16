@@ -69,7 +69,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-4">
+    <main className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden bg-transparent px-4 pb-[env(safe-area-inset-bottom)]">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -180,7 +180,7 @@ export default function LoginPage() {
           {/* Sign up link */}
           <p className="text-[13px] text-white/40 text-center mt-6">
             {t("noAccount")}{" "}
-            <Link href="/auth/signup" className="text-violet-400 hover:text-violet-300 transition-colors">
+            <Link href="/auth/signup" className="text-violet-400 hover:text-violet-300 transition-colors py-2 inline-block">
               {t("signUp")}
             </Link>
           </p>

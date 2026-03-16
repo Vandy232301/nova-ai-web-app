@@ -85,13 +85,13 @@ export default function OrderPage() {
           <Image src="/nova-logo-icon.png" alt="NOVA" width={40} height={40} className="w-9 h-9 sm:w-10 sm:h-10 object-contain" />
           <span className="tracking-tight font-bold text-[17px] sm:text-[18px]">NOVA</span>
         </Link>
-        <Link href="/dashboard" className="liquid-glass rounded-full px-3 py-1 text-[12px] text-white/70 hover:text-white/90">
+        <Link href="/dashboard" className="liquid-glass rounded-full px-3 py-2 text-[12px] text-white/70 hover:text-white/90 min-h-[44px] flex items-center">
           Dashboard
         </Link>
       </header>
 
       {/* Form */}
-      <section className="relative z-10 w-full max-w-2xl px-4 sm:px-8 pt-28 sm:pt-36 pb-20">
+      <section className="relative z-10 w-full max-w-2xl px-4 sm:px-8 pt-28 sm:pt-36 pb-[calc(5rem+env(safe-area-inset-bottom))]">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

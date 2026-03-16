@@ -140,7 +140,7 @@ export default function BuildPage() {
     <main className="relative flex h-[100dvh] flex-col overflow-hidden bg-transparent">
       {/* Header */}
       <header className="shrink-0 flex items-center justify-between px-4 sm:px-6 pt-[calc(0.75rem+env(safe-area-inset-top))] pb-3 border-b border-white/5">
-        <Link href="/dashboard" className="flex items-center gap-2 text-white">
+        <Link href="/dashboard" className="flex items-center gap-2 text-white min-h-[44px]">
           <Image src="/nova-logo-icon.png" alt="NOVA" width={32} height={32} className="w-8 h-8 object-contain" />
           <span className="tracking-tight font-bold text-[15px]">NOVA</span>
           <span className="text-[11px] text-violet-400/70 font-medium uppercase tracking-wider ml-1">Builder</span>
@@ -150,7 +150,7 @@ export default function BuildPage() {
             <div className="w-2 h-2 rounded-full bg-emerald-400" />
             <span className="text-[11px] text-white/40">Connected</span>
           </div>
-          <Link href="/dashboard" className="liquid-glass rounded-full px-3 py-1 text-[11px] text-white/50 hover:text-white/70">
+          <Link href="/dashboard" className="liquid-glass rounded-full px-3 py-2 min-h-[44px] flex items-center text-[11px] text-white/50 hover:text-white/70">
             Dashboard
           </Link>
         </div>
