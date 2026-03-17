@@ -25,7 +25,7 @@ export default async function middleware(request: NextRequest) {
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       "font-src 'self' https://fonts.gstatic.com",
       "img-src 'self' data: https:",
-      "connect-src 'self' https://api.anthropic.com https://calendar.google.com https://calendar.app.google https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.vandy.ro https://178.128.201.58",
+      "connect-src 'self' https://api.anthropic.com https://calendar.google.com https://calendar.app.google https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.vandy.ro",
       "frame-src https://calendar.google.com https://calendar.app.google https://js.stripe.com https://checkout.stripe.com",
     ].join("; ")
   );
